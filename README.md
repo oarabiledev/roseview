@@ -25,6 +25,11 @@ Firstly link to the file in your html :
 <script src="qwikview.core.js"></script>
 /** Or */
 <script src="qwikview.es.js" type="module"></script>
+/** Or */
+<script src="https://www.unpkg.com/qwikview" type="module"></script>
+/**Or */
+
+npm install qwikview
 ```
 
 > I will add suport with using vite as a build step 🚀
