@@ -1375,7 +1375,7 @@ const createSignal = function (defaultValue = null) {
 	return [getValue, setValue, setSubscriberFunc];
 };
 
-const showIf = (restingVal, child, fallback) => {
+const showIF = (restingVal, child, fallback) => {
 	if (typeof restingVal === "boolean") {
 		if (restingVal) {
 			child.show();
