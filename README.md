@@ -106,6 +106,9 @@ let button = html.Button(main, "Hello World", {
 htmlPage.Build(main);
 ```
 
+Check This Page :
+- [Elements Documentation](docs/Elements.md)
+
 ## The Approach To Reactivity
 
 Signals have been revived al;l thanks to solid and qwik, so we use them too:
@@ -126,8 +129,34 @@ let [getTheme, setTheme, onThemeChange] = createSignal("light");
 // Access the values via getThene and setTheme
 ```
 
+Check This Page:
+
+- [Reactivity Docs](docs/Reactivity.md)
+
 ## showIF
 
 You can import showIF function which allows you to hide or show certain elements in a page.
 
-That is all, for the framework !
+```javascript
+
+import { showIF } from 'qwikview.es.js'
+
+showIF(truthy_or_falsy_val, elementA, elementB);
+```
+
+Check This Page:
+
+- [Reactivity Docs](docs/Reactivity.md)
+
+That is the barebones needed to get started with the framework.
+Thank You For Your Interest ❣️
+
+For the next step I suggest you check :
+
+- [Methods Documentation](docs/Methods.md)
+
+- [Elements Documentation](docs/Elements.md)
+
+- [Reactivity Docs](docs/Reactivity.md)
+
+- [Animation Docs](docs/Animation.md)

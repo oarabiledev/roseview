@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.0.1
+// 0.0.2
 
 const html = {
 	/**
@@ -1450,4 +1450,4 @@ const cssObjectParser = (styles) => {
 
 // Export or expose the functions/objects
 
-export { html, htmlPage, createSignal, showIF}
+export { html, htmlPage, createSignal, showIF };
