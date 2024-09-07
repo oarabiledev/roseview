@@ -1,11 +1,11 @@
-// qwikView web framework for
+// roseview web framework for
 // declarative ui development.
 
 // @license
 // MIT
 
 // @version
-// 0.0.2
+// 0.0.3
 
 const html = {
 	/**
@@ -20,91 +20,87 @@ const html = {
 		return new htmlContainer(type, options, parent);
 	},
 
+	Element: (parent, tag) => {
+		return new htmlControl(parent, tag);
+	},
+
 	/**
 	 * Creates a button element.
 	 * @param {html} parent - The parent element to which the button will be appended.
 	 * @param {string} text - The text content of the button.
-	 * @param {object} [props={}] - Additional properties to set on the button (e.g., id, class).
 	 * @returns {htmlButton} - A new htmlButton instance.
 	 */
-	Button: (parent, text, props = {}) => {
-		return new htmlButton(parent, text, props);
+	Button: (parent, text) => {
+		return new htmlButton(parent, text);
 	},
 
 	/**
 	 * Creates an image element.
 	 * @param {html} parent - The parent element to which the image will be appended.
 	 * @param {string|string[]} sources - The source(s) of the image(s).
-	 * @param {object} [props={}] - Additional properties to set on the image (e.g., alt, class).
 	 * @returns {htmlImage} - A new htmlImage instance.
 	 */
-	Image: (parent, sources, props = {}) => {
-		return new htmlImage(parent, sources, props);
+	Image: (parent, sources) => {
+		return new htmlImage(parent, sources);
 	},
 
 	/**
 	 * Creates a text element.
 	 * @param {html} parent - The parent element to which the text will be appended.
 	 * @param {string} text - The text content.
-	 * @param {object} [props={}] - Additional properties to set on the text element (e.g., id, class).
 	 * @returns {htmlText} - A new htmlText instance.
 	 */
-	Text: (parent, text, props = {}) => {
-		return new htmlText(parent, text, props);
+	Text: (parent, text) => {
+		return new htmlText(parent, text);
 	},
 
 	/**
 	 * Creates a list element.
 	 * @param {html} parent - The parent element to which the list will be appended.
 	 * @param {string[]} list - An array of list items.
-	 * @param {object} [props={}] - Additional properties to set on the list element (e.g., type, class).
 	 * @returns {htmlList} - A new htmlList instance.
 	 */
-	List: (parent, list, props = {}) => {
-		return new htmlList(parent, list, props);
+	List: (parent, list) => {
+		return new htmlList(parent, list);
 	},
 
 	/**
 	 * Creates an input element.
 	 * @param {html} parent - The parent element to which the input will be appended.
 	 * @param {string} type - The type of input (e.g., 'text', 'checkbox').
-	 * @param {object} [props={}] - Additional properties to set on the input (e.g., id, value).
 	 * @returns {htmlInput} - A new htmlInput instance.
 	 */
-	Input: (parent, type, props = {}) => {
-		return new htmlInput(parent, type, props);
+	Input: (parent, type) => {
+		return new htmlInput(parent, type);
 	},
 
 	/**
 	 * Creates a progress element.
 	 * @param {html} parent - The parent element to which the progress element will be appended.
 	 * @param {number} value - The initial value of the progress element.
-	 * @param {object} [props={}] - Additional properties to set on the progress element (e.g., max, class).
 	 * @returns {htmlProgress} - A new htmlProgress instance.
 	 */
-	Progress: (parent, value, props = {}) => {
-		return new htmlProgress(parent, value, props);
+	Progress: (parent, value) => {
+		return new htmlProgress(parent, value);
 	},
 
 	/**
 	 * Creates a div element.
 	 * @param {html} parent - The parent element to which the div will be appended.
-	 * @param {object} [props={}] - Additional properties to set on the div (e.g., id, class).
 	 * @returns {htmlDiv} - A new htmlDiv instance.
 	 */
-	Div: (parent, props = {}) => {
-		return new htmlDiv(parent, props);
+	Div: (parent) => {
+		return new htmlDiv(parent);
 	},
 
 	/**
 	 * Creates a paragraph element.
 	 * @param {html} parent - The parent element to which the paragraph will be appended.
 	 * @param {string} text - The text content of the paragraph.
-	 * @param {object} [props={}] - Additional properties to set on the paragraph (e.g., id, class).
 	 * @returns {htmlParagraph} - A new htmlParagraph instance.
 	 */
-	Paragraph: (parent, text, props = {}) => {
-		return new htmlParagraph(parent, text, props);
+	Paragraph: (parent, text) => {
+		return new htmlParagraph(parent, text);
 	},
 
 	/**
@@ -112,11 +108,10 @@ const html = {
 	 * @param {html} parent - The parent element to which the header will be appended.
 	 * @param {number} level - The level of the header (e.g., 1 for <h1>, 2 for <h2>).
 	 * @param {string} text - The text content of the header.
-	 * @param {object} [props={}] - Additional properties to set on the header (e.g., id, class).
 	 * @returns {htmlHeader} - A new htmlHeader instance.
 	 */
-	Header: (parent, level, text, props = {}) => {
-		return new htmlHeader(parent, level, text, props);
+	Header: (parent, level, text) => {
+		return new htmlHeader(parent, level, text);
 	},
 
 	/**
@@ -124,21 +119,19 @@ const html = {
 	 * @param {html} parent - The parent element to which the anchor will be appended.
 	 * @param {string} href - The URL the anchor points to.
 	 * @param {string} text - The text content of the anchor.
-	 * @param {object} [props={}] - Additional properties to set on the anchor (e.g., target, class).
 	 * @returns {htmlAnchor} - A new htmlAnchor instance.
 	 */
-	Anchor: (parent, href, text, props = {}) => {
-		return new htmlAnchor(parent, href, text, props);
+	Anchor: (parent, href, text) => {
+		return new htmlAnchor(parent, href, text);
 	},
 
 	/**
 	 * Creates a form element.
 	 * @param {html} parent - The parent element to which the form will be appended.
-	 * @param {object} [props={}] - Additional properties to set on the form (e.g., action, method).
 	 * @returns {htmlForm} - A new htmlForm instance.
 	 */
-	Form: (parent, props = {}) => {
-		return new htmlForm(parent, props);
+	Form: (parent) => {
+		return new htmlForm(parent);
 	},
 
 	/**
@@ -146,103 +139,94 @@ const html = {
 	 * @param {html} parent - The parent element to which the table will be appended.
 	 * @param {string[]} [headers=[]] - An array of table header titles.
 	 * @param {string[][]} [rows=[]] - A 2D array representing the rows and columns of the table.
-	 * @param {object} [props={}] - Additional properties to set on the table (e.g., id, class).
 	 * @returns {htmlTable} - A new htmlTable instance.
 	 */
-	Table: (parent, headers = [], rows = [], props = {}) => {
-		return new htmlTable(parent, headers, rows, props);
+	Table: (parent, headers = [], rows = []) => {
+		return new htmlTable(parent, headers, rows);
 	},
 
 	/**
 	 * Creates a select (dropdown) element.
 	 * @param {html} parent - The parent element to which the select will be appended.
 	 * @param {string[]} [options=[]] - An array of options for the dropdown.
-	 * @param {object} [props={}] - Additional properties to set on the select (e.g., id, class).
 	 * @returns {htmlSelect} - A new htmlSelect instance.
 	 */
-	Select: (parent, options = [], props = {}) => {
-		return new htmlSelect(parent, options, props);
+	Select: (parent, options = []) => {
+		return new htmlSelect(parent, options);
 	},
 
 	/**
 	 * Creates an iframe element.
 	 * @param {html} parent - The parent element to which the iframe will be appended.
 	 * @param {string} src - The source URL of the iframe.
-	 * @param {object} [props={}] - Additional properties to set on the iframe (e.g., width, height).
 	 * @returns {htmlIframe} - A new htmlIframe instance.
 	 */
-	Iframe: (parent, src, props = {}) => {
-		return new htmlIframe(parent, src, props);
+	Iframe: (parent, src) => {
+		return new htmlIframe(parent, src);
 	},
 
 	/**
 	 * Creates a label element.
 	 * @param {html} parent - The parent element to which the label will be appended.
 	 * @param {string} text - The text content of the label.
-	 * @param {object} [props={}] - Additional properties to set on the label (e.g., for, class).
 	 * @returns {htmlLabel} - A new htmlLabel instance.
 	 */
-	Label: (parent, text, props = {}) => {
-		return new htmlLabel(parent, text, props);
+	Label: (parent, text) => {
+		return new htmlLabel(parent, text);
 	},
 
 	/**
 	 * Creates a video element.
 	 * @param {html} parent - The parent element to which the video will be appended.
 	 * @param {string|string[]} [sources=[]] - The source(s) of the video file(s).
-	 * @param {object} [props={}] - Additional properties to set on the video element (e.g., controls, autoplay).
 	 * @returns {htmlVideo} - A new htmlVideo instance.
 	 */
-	Video: (parent, sources = [], props = {}) => {
-		return new htmlVideo(parent, sources, props);
+	Video: (parent, sources = []) => {
+		return new htmlVideo(parent, sources);
 	},
 
 	/**
 	 * Creates an audio element.
 	 * @param {html} parent - The parent element to which the audio will be appended.
 	 * @param {string|string[]} [sources=[]] - The source(s) of the audio file(s).
-	 * @param {object} [props={}] - Additional properties to set on the audio element (e.g., controls, autoplay).
 	 * @returns {htmlAudio} - A new htmlAudio instance.
 	 */
-	Audio: (parent, sources = [], props = {}) => {
-		return new htmlAudio(parent, sources, props);
+	Audio: (parent, sources = []) => {
+		return new htmlAudio(parent, sources);
 	},
 
 	/**
 	 * Creates a textarea element.
 	 * @param {html} parent - The parent element to which the textarea will be appended.
 	 * @param {string} [value=""] - The initial text value of the textarea.
-	 * @param {object} [props={}] - Additional properties to set on the textarea (e.g., rows, cols).
 	 * @returns {htmlTextarea} - A new htmlTextarea instance.
 	 */
-	Textarea: (parent, value = "", props = {}) => {
-		return new htmlTextarea(parent, value, props);
+	Textarea: (parent, value = "") => {
+		return new htmlTextarea(parent, value);
 	},
 
 	/**
 	 * Creates a fieldset element.
 	 * @param {html} parent - The parent element to which the fieldset will be appended.
 	 * @param {string} [legendText=""] - The text for the fieldset's legend.
-	 * @param {object} [props={}] - Additional properties to set on the fieldset (e.g., class, id).
 	 * @returns {htmlFieldset} - A new htmlFieldset instance.
 	 */
-	Fieldset: (parent, legendText = "", props = {}) => {
-		return new htmlFieldset(parent, legendText, props);
+	Fieldset: (parent, legendText = "") => {
+		return new htmlFieldset(parent, legendText);
 	},
 
 	/**
 	 * Creates a datalist element.
 	 * @param {html} parent - The parent element to which the datalist will be appended.
 	 * @param {string[]} [options=[]] - An array of options for the datalist.
-	 * @param {object} [props={}] - Additional properties to set on the datalist (e.g., id, class).
 	 * @returns {htmlDatalist} - A new htmlDatalist instance.
 	 */
-	Datalist: (parent, options = [], props = {}) => {
-		return new htmlDatalist(parent, options, props);
+	Datalist: (parent, options = []) => {
+		return new htmlDatalist(parent, options);
 	}
 };
 
-const html_widget = class {
+const htmlControl = class {
 	constructor() {
 		this.element = null;
 		this.elementUid = null;
@@ -255,24 +239,28 @@ const html_widget = class {
 	 * @param {*} styles
 	 */
 	style(styles) {
-		const className = cssObjectParser(styles);
+		const className = cssParser(styles);
 		this.element.classList.add(className);
 		this.elementClasses.push(className);
 	}
 
-	/**
-	 * Adds an on-enter event listener to that
-	 * element
-	 */
-	set onEnter(Fn) {
-		this.element.addEventListener("keypress", (event) => {
-			if (event.key == "Enter") {
-				console.log("D");
-				Fn();
-			} else {
-			}
+	bindInput(signal) {
+		const [getValue, setValue, subscribe] = signal;
+
+		// Set the initial value of the input field from the signal
+		this.element.value = getValue();
+
+		this.element.addEventListener("input", (e) => {
+			setValue(e.target.value);
 		});
+
+		subscribe((newValue) => {
+			this.element.value = newValue;
+		});
+
+		return this;
 	}
+	
 	/**
 	 * Add multiple classes
 	 */
@@ -308,10 +296,10 @@ const html_widget = class {
 
 	/**
 	 * Add a child to that element
-	 * @param {InstanceType<html_widget>} child
+	 * @param {InstanceType<htmlControl>} child
 	 */
 	addChild(child) {
-		if (child instanceof html_widget) {
+		if (child instanceof htmlControl) {
 			this.element.appendChild(child.element);
 		} else {
 			console.error("Mounted Child Is Not A htmlComponent");
@@ -335,35 +323,19 @@ const html_widget = class {
 		}
 	}
 
-	set onContextMenu(Fn) {
-		this.element.addEventListener("contextmenu", (event) => {
-			this.eventListeners.push(["contextmenu", Fn]);
-			event.preventDefault();
-			Fn();
-		});
-	}
-
-	set onTouch(Fn) {
-		this.element.addEventListener("click", Fn);
+	/**
+	 * Add an event listener and handler.
+	 * @param {EventListener} event
+	 * @param {Function} handler
+	 */
+	on(event, handler) {
+		this.addEventListener(event, handler);
 		this.eventListeners.push(["click", Fn]);
 	}
 
-	set onLongTouch(Fn) {
-		let touchTimeout;
-		this.element.addEventListener("touchstart", (event) => {
-			if (event.touches.length === 1) {
-				touchTimeout = setTimeout(() => Fn(event), 600);
-			}
-		});
-
-		this.element.addEventListener("touchend", () => {
-			clearTimeout(touchTimeout);
-		});
-
-		this.eventListeners.push(["touchstart", Fn]);
-		this.eventListeners.push(["touchend", Fn]);
-	}
-
+	/**
+	 * Setter method to switch element visibility
+	 */
 	set show(bool) {
 		if (bool) {
 			this.style({
@@ -376,6 +348,10 @@ const html_widget = class {
 		}
 	}
 
+	/**
+	 * Setter method, allows switching element visibility
+	 * in a way that the element does not take space
+	 */
 	set gone(bool) {
 		if (bool) {
 			this.style({
@@ -388,8 +364,17 @@ const html_widget = class {
 		}
 	}
 
+	/**
+	 * Switch on element visibility
+	 */
 	set focus(bool) {}
 
+	/**
+	 *
+	 * @param {*} type
+	 * @param {*} callback
+	 * @param {*} time
+	 */
 	animate(type, callback, time = 1000) {
 		if (type === true && time === true) {
 		}
@@ -451,9 +436,9 @@ const html_widget = class {
 	}
 };
 
-// Extend html_widget Class & Define Animation Sequence Methods
+// Extend htmlControl Class & Define Animation Sequence Methods
 
-html_widget.prototype.animationSequence = function () {
+htmlControl.prototype.animationSequence = function () {
 	this._onStart = null;
 	this._onCompleted = null;
 	this._isAnimating = false;
@@ -468,9 +453,9 @@ html_widget.prototype.animationSequence = function () {
  * @param {number} alpha - The opacity value (0 to 1).
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.alpha = function (alpha, duration, delay = 0) {
+htmlControl.prototype.alpha = function (alpha, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -486,7 +471,7 @@ html_widget.prototype.alpha = function (alpha, duration, delay = 0) {
 /**
  * Ends the current animation.
  */
-html_widget.prototype.end = function () {
+htmlControl.prototype.end = function () {
 	this._isAnimating = false;
 	this.element.style.transition = "";
 	this._animationQueue = [];
@@ -497,7 +482,7 @@ html_widget.prototype.end = function () {
  * Checks if the animation is currently running.
  * @returns {boolean} - Returns true if the animation is running, otherwise false.
  */
-html_widget.prototype.isAnimSequenceRunning = function () {
+htmlControl.prototype.isAnimSequenceRunning = function () {
 	return this._isAnimating;
 };
 
@@ -507,9 +492,9 @@ html_widget.prototype.isAnimSequenceRunning = function () {
  * @param {number} top - The new top position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.position = function (left, top, duration, delay = 0) {
+htmlControl.prototype.position = function (left, top, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -527,9 +512,9 @@ html_widget.prototype.position = function (left, top, duration, delay = 0) {
  * @param {number} left - The new left position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.positionX = function (left, duration, delay = 0) {
+htmlControl.prototype.positionX = function (left, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -547,9 +532,9 @@ html_widget.prototype.positionX = function (left, duration, delay = 0) {
  * @param {number} top - The new top position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.positionY = function (top, duration, delay = 0) {
+htmlControl.prototype.positionY = function (top, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -567,9 +552,9 @@ html_widget.prototype.positionY = function (top, duration, delay = 0) {
  * @param {number} angle - The rotation angle in degrees.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.rotate = function (angle, duration, delay = 0) {
+htmlControl.prototype.rotate = function (angle, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -587,9 +572,9 @@ html_widget.prototype.rotate = function (angle, duration, delay = 0) {
  * @param {number} angle - The rotation angle in degrees.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.rotateX = function (angle, duration, delay = 0) {
+htmlControl.prototype.rotateX = function (angle, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -607,9 +592,9 @@ html_widget.prototype.rotateX = function (angle, duration, delay = 0) {
  * @param {number} angle - The rotation angle in degrees.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.rotateY = function (angle, duration, delay = 0) {
+htmlControl.prototype.rotateY = function (angle, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -628,9 +613,9 @@ html_widget.prototype.rotateY = function (angle, duration, delay = 0) {
  * @param {number} y - The scale factor in the Y direction.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.scale = function (x, y, duration, delay = 0) {
+htmlControl.prototype.scale = function (x, y, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -648,9 +633,9 @@ html_widget.prototype.scale = function (x, y, duration, delay = 0) {
  * @param {number} x - The scale factor in the X direction.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.scaleX = function (x, duration, delay = 0) {
+htmlControl.prototype.scaleX = function (x, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -668,9 +653,9 @@ html_widget.prototype.scaleX = function (x, duration, delay = 0) {
  * @param {number} y - The scale factor in the Y direction.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.scaleY = function (y, duration, delay = 0) {
+htmlControl.prototype.scaleY = function (y, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -687,7 +672,7 @@ html_widget.prototype.scaleY = function (y, duration, delay = 0) {
  * Sets the callback function to be called when the animation starts.
  * @param {Function} callback - The callback function to be called when the animation starts.
  */
-html_widget.prototype.setOnStart = function (callback) {
+htmlControl.prototype.setOnStart = function (callback) {
 	this._onStart = callback;
 };
 
@@ -695,15 +680,15 @@ html_widget.prototype.setOnStart = function (callback) {
  * Sets the callback function to be called when the animation ends.
  * @param {Function} callback - The callback function to be called when the animation ends.
  */
-html_widget.prototype.setOnCompleted = function (callback) {
+htmlControl.prototype.setOnCompleted = function (callback) {
 	this._onCompleted = callback;
 };
 
 /**
  * Starts the animation queue.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.start = function () {
+htmlControl.prototype.start = function () {
 	if (this._onStart) {
 		this._onStart();
 	}
@@ -716,7 +701,7 @@ html_widget.prototype.start = function () {
  * Executes the next animation in the queue.
  * @private
  */
-html_widget.prototype._executeNextAnimation = function () {
+htmlControl.prototype._executeNextAnimation = function () {
 	if (this._animationQueue.length > 0) {
 		this._currentAnimation = this._animationQueue.shift();
 		this._currentAnimation().then(() => {
@@ -729,9 +714,9 @@ html_widget.prototype._executeNextAnimation = function () {
 
 /**
  * Executes a function after the current animation finishes.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.then = function () {
+htmlControl.prototype.then = function () {
 	this._animationQueue.push(() => Promise.resolve());
 	return this;
 };
@@ -742,9 +727,9 @@ html_widget.prototype.then = function () {
  * @param {number} top - The new top position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.translate = function (left, top, duration, delay = 0) {
+htmlControl.prototype.translate = function (left, top, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -762,9 +747,9 @@ html_widget.prototype.translate = function (left, top, duration, delay = 0) {
  * @param {number} left - The new left position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.translateX = function (left, duration, delay = 0) {
+htmlControl.prototype.translateX = function (left, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -782,9 +767,9 @@ html_widget.prototype.translateX = function (left, duration, delay = 0) {
  * @param {number} top - The new top position.
  * @param {number} duration - The duration of the animation in milliseconds.
  * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {html_widget} - The instance for chaining.
+ * @returns {htmlControl} - The instance for chaining.
  */
-html_widget.prototype.translateY = function (top, duration, delay = 0) {
+htmlControl.prototype.translateY = function (top, duration, delay = 0) {
 	this._animationQueue.push(() => {
 		return new Promise((resolve) => {
 			setTimeout(() => {
@@ -801,7 +786,7 @@ html_widget.prototype.translateY = function (top, duration, delay = 0) {
  * Handles the end of an animation.
  * @private
  */
-html_widget.prototype._onAnimationEnd = function () {
+htmlControl.prototype._onAnimationEnd = function () {
 	this._isAnimating = false;
 	if (this._animationQueue.length > 0) {
 		this._executeNextAnimation();
@@ -810,9 +795,9 @@ html_widget.prototype._onAnimationEnd = function () {
 	}
 };
 
-// Define individual classes for each HTML element that extends html_widget
+// Define individual classes for each HTML element that extends htmlControl
 
-const htmlButton = class extends html_widget {
+const htmlButton = class extends htmlControl {
 	constructor(parent, text, props = {}) {
 		super();
 		this.element = document.createElement("button");
@@ -823,7 +808,7 @@ const htmlButton = class extends html_widget {
 	}
 };
 
-const htmlImage = class extends html_widget {
+const htmlImage = class extends htmlControl {
 	constructor(parent, sources, props = {}) {
 		super();
 		this.element = document.createElement("img");
@@ -835,7 +820,7 @@ const htmlImage = class extends html_widget {
 	}
 };
 
-const htmlText = class extends html_widget {
+const htmlText = class extends htmlControl {
 	constructor(parent, text, props = {}) {
 		super();
 		this.element = document.createElement("span");
@@ -846,7 +831,7 @@ const htmlText = class extends html_widget {
 	}
 };
 
-const htmlList = class extends html_widget {
+const htmlList = class extends htmlControl {
 	constructor(parent, list, props = {}) {
 		super();
 		this.element = document.createElement("ul");
@@ -861,7 +846,7 @@ const htmlList = class extends html_widget {
 	}
 };
 
-const htmlInput = class extends html_widget {
+const htmlInput = class extends htmlControl {
 	constructor(parent, type, props = {}) {
 		super();
 		this.element = document.createElement("input");
@@ -872,7 +857,7 @@ const htmlInput = class extends html_widget {
 	}
 };
 
-const htmlProgress = class extends html_widget {
+const htmlProgress = class extends htmlControl {
 	constructor(parent, value, props = {}) {
 		super();
 		this.element = document.createElement("progress");
@@ -883,7 +868,7 @@ const htmlProgress = class extends html_widget {
 	}
 };
 
-const htmlDiv = class extends html_widget {
+const htmlDiv = class extends htmlControl {
 	constructor(parent, props = {}) {
 		super();
 		this.element = document.createElement("div");
@@ -893,7 +878,7 @@ const htmlDiv = class extends html_widget {
 	}
 };
 
-const htmlParagraph = class extends html_widget {
+const htmlParagraph = class extends htmlControl {
 	constructor(parent, text, props = {}) {
 		super();
 		this.element = document.createElement("p");
@@ -904,7 +889,7 @@ const htmlParagraph = class extends html_widget {
 	}
 };
 
-const htmlHeader = class extends html_widget {
+const htmlHeader = class extends htmlControl {
 	constructor(parent, level, text, props = {}) {
 		super();
 		this.element = document.createElement(`h${level}`);
@@ -915,7 +900,7 @@ const htmlHeader = class extends html_widget {
 	}
 };
 
-const htmlAnchor = class extends html_widget {
+const htmlAnchor = class extends htmlControl {
 	constructor(parent, href, text, props = {}) {
 		super();
 		this.element = document.createElement("a");
@@ -927,7 +912,7 @@ const htmlAnchor = class extends html_widget {
 	}
 };
 
-const htmlForm = class extends html_widget {
+const htmlForm = class extends htmlControl {
 	constructor(parent, props = {}) {
 		super();
 		this.element = document.createElement("form");
@@ -937,7 +922,7 @@ const htmlForm = class extends html_widget {
 	}
 };
 
-const htmlTable = class extends html_widget {
+const htmlTable = class extends htmlControl {
 	constructor(parent, headers = [], rows = [], props = {}) {
 		super();
 		this.element = document.createElement("table");
@@ -974,7 +959,7 @@ const htmlTable = class extends html_widget {
 	}
 };
 
-const htmlSelect = class extends html_widget {
+const htmlSelect = class extends htmlControl {
 	constructor(parent, options = [], props = {}) {
 		super();
 		this.element = document.createElement("select");
@@ -992,7 +977,7 @@ const htmlSelect = class extends html_widget {
 	}
 };
 
-const htmlIframe = class extends html_widget {
+const htmlIframe = class extends htmlControl {
 	constructor(parent, src, props = {}) {
 		super();
 		this.element = document.createElement("iframe");
@@ -1003,7 +988,7 @@ const htmlIframe = class extends html_widget {
 	}
 };
 
-const htmlLabel = class extends html_widget {
+const htmlLabel = class extends htmlControl {
 	constructor(parent, text, props = {}) {
 		super();
 		this.element = document.createElement("label");
@@ -1014,7 +999,7 @@ const htmlLabel = class extends html_widget {
 	}
 };
 
-const htmlVideo = class extends html_widget {
+const htmlVideo = class extends htmlControl {
 	constructor(parent, sources = [], props = {}) {
 		super();
 		this.element = document.createElement("video");
@@ -1029,7 +1014,7 @@ const htmlVideo = class extends html_widget {
 	}
 };
 
-const htmlAudio = class extends html_widget {
+const htmlAudio = class extends htmlControl {
 	constructor(parent, sources = [], props = {}) {
 		super();
 		this.element = document.createElement("audio");
@@ -1044,7 +1029,7 @@ const htmlAudio = class extends html_widget {
 	}
 };
 
-const htmlTextarea = class extends html_widget {
+const htmlTextarea = class extends htmlControl {
 	constructor(parent, value = "", props = {}) {
 		super();
 		this.element = document.createElement("textarea");
@@ -1055,7 +1040,7 @@ const htmlTextarea = class extends html_widget {
 	}
 };
 
-const htmlFieldset = class extends html_widget {
+const htmlFieldset = class extends htmlControl {
 	constructor(parent, legendText = "", props = {}) {
 		super();
 		this.element = document.createElement("fieldset");
@@ -1070,7 +1055,7 @@ const htmlFieldset = class extends html_widget {
 	}
 };
 
-const htmlDatalist = class extends html_widget {
+const htmlDatalist = class extends htmlControl {
 	constructor(parent, options = [], props = {}) {
 		super();
 		this.element = document.createElement("datalist");
@@ -1085,7 +1070,7 @@ const htmlDatalist = class extends html_widget {
 	}
 };
 
-const htmlContainer = class extends html_widget {
+const htmlContainer = class extends htmlControl {
 	constructor(type = "linear", options = "fillxy,vcenter", parent) {
 		super();
 		this.element = document.createElement("div");
@@ -1115,39 +1100,39 @@ const optionsApi = (element, options) => {
 			element.classList.add("noscrollbar");
 		},
 		scrollxy: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				overflow: "auto"
 			});
 			element.classList.add(className);
 		},
 		scrollx: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				overflowX: "auto"
 			});
 			element.classList.add(className);
 		},
 		scrolly: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				overflowY: "auto"
 			});
 			element.classList.add(className);
 		},
 		left: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				justifyContent: "flex-start"
 			});
 			element.classList.add(className);
 		},
 		right: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				justifyContent: "flex-end"
 			});
 			element.classList.add(className);
 		},
 		center: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center"
@@ -1155,7 +1140,7 @@ const optionsApi = (element, options) => {
 			element.classList.add(className);
 		},
 		vcenter: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center"
@@ -1163,28 +1148,28 @@ const optionsApi = (element, options) => {
 			element.classList.add(className);
 		},
 		bottom: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				alignItems: "flex-end"
 			});
 			element.classList.add(className);
 		},
 		top: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				alignItems: "flex-start"
 			});
 			element.classList.add(className);
 		},
 		horizontal: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				flexDirection: "row !important"
 			});
 			element.classList.add(className);
 		},
 		vertical: () => {
-			let className = cssObjectParser({
+			let className = cssParser({
 				display: "flex",
 				flexDirection: "column"
 			});
@@ -1211,14 +1196,14 @@ function layoutFitApi(layout, type, options) {
 	let layoutTYPE = type.toLowerCase();
 
 	if (layoutTYPE == "linear") {
-		let className = cssObjectParser({
+		let className = cssParser({
 			display: "inline-flex",
 			position: "relative !important",
 			flexDirection: "column !important"
 		});
 		layout.classList.add(className);
 	} else if (layoutTYPE == "absolute") {
-		let className = cssObjectParser({
+		let className = cssParser({
 			display: "flex"
 		});
 		layout.classList.add(className);
@@ -1391,10 +1376,10 @@ const showIF = (restingVal, child, fallback) => {
 
 const generateClassName = (() => {
 	let counter = 0;
-	return () => `vinescript-class-${counter++}`;
+	return () => `roseview-class-${counter++}`;
 })();
 
-const cssObjectParser = (styles) => {
+const cssParser = (styles) => {
 	const className = generateClassName();
 	const styleSheet = document.styleSheets[0] || document.head.appendChild(document.createElement("style")).sheet;
 
@@ -1447,31 +1432,3 @@ const cssObjectParser = (styles) => {
 
 	return className;
 };
-
-// Export or expose the functions/objects
-(function (global, factory) {
-	if (typeof module !== "undefined" && module.exports) {
-		// Node.js or CommonJS environment
-		module.exports = factory();
-	} else if (typeof define === "function" && define.amd) {
-		// AMD environment
-		define(factory);
-	} else {
-		// Browser and ES module environments
-		const exported = factory();
-		if (typeof exports === "object" && typeof module !== "undefined") {
-			module.exports = exported;
-		} else if (typeof global !== "undefined") {
-			Object.assign(global, exported);
-		} else if (typeof window !== "undefined") {
-			Object.assign(window, exported);
-		}
-	}
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function () {
-	return {
-		createSignal,
-		showIf,
-		html,
-		htmlPage
-	};
-});

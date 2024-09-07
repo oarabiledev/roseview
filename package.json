@@ -1,11 +1,8 @@
 {
-	"name": "qwikview",
-	"version": "0.0.2",
+	"name": "roseview",
+	"version": "0.0.3",
 	"description": "optimized ui framework for writing front-end's declarativley.",
-	"main": "app.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
+	"main": "roseview.es.js",
 	"keywords": [
 		"ui"
 	],

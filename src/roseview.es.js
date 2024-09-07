@@ -1,11 +1,11 @@
-// qwikView web framework for
+// roseview web framework for
 // declarative ui development.
 
 // @license
 // MIT
 
 // @version
-// 0.0.2
+// 0.0.3
 
 const html = {
 	/**

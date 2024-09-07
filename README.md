@@ -1,8 +1,8 @@
-![qwikView Banner](src/qwikview.banner.png)
+![roseview Banner](docs/roseview.png)
 
-# qwikView : The developer friendly framework
+# roseview
 
-qwikView allows developers to control all ui, using javascript and that makes achieving reactivity easier.
+roseview allows developers to control all ui, using javascript and that makes achieving reactivity easier.
 
 Before libraries were a thing, the way forwad on ui was narrow minded, it was all about separation of concerns and that worked for a while, before we realized we could go crazy with the web.
 
@@ -10,7 +10,7 @@ There are many frameworks and we are just one of them, all built for different n
 
 > **_NOTE:_** For pages that ussually are demo pages, I dont recommend use of any framework.
 
-Now that we have de-mistified the purpose of all frameworks, here is what makes qwikView different :
+Now that we have de-mistified the purpose of all frameworks, here is what makes roseview different :
 
 - Can be used without a build step
 - We build everything and use only a few external libraries
@@ -22,17 +22,12 @@ Now that we have de-mistified the purpose of all frameworks, here is what makes 
 Firstly link to the file in your html :
 
 ```html
-<script src="qwikview.core.js"></script>
+<script src="roseview.core.js"></script>
 /** Or */
-<script src="qwikview.es.js" type="module"></script>
+<script src="roseview.es.js" type="module"></script>
 /** Or */
-<script src="https://www.unpkg.com/qwikview" type="module"></script>
-/**Or */
-
-npm install qwikview
+<script src="https://www.unpkg.com/roseview" type="module"></script>
 ```
-
-> I will add suport with using vite as a build step 🚀
 
 Now the next focus is your main file, you can call it : `app.js` or `main.js` :
 
@@ -43,8 +38,7 @@ Now the next focus is your main file, you can call it : `app.js` or `main.js` :
  * flow of  elements in them.
  */
 
-// For Es Environment
-import { html, htmlPage } from "qwikview.es.js";
+import { html, htmlPage } from "roseview";
 
 // let main = html.CreateLayout(type, options);
 
@@ -73,7 +67,7 @@ let main = html.CreateLayout("linear", "top, vertical, scrolly");
 htmlPage.Build(main);
 ```
 
-You have a simple qwikView app now, to add elements like buttons and Images, they are all methods in the html Object.
+You have a simple roseview app now, to add elements like buttons and Images, they are all methods in the html Object.
 
 > Refer To The Elements.md Page For more Info
 
@@ -84,10 +78,7 @@ Here is a display of basic htmlelements in use :
 ```javascript
 let main = html.CreateLayout("linear", "center");
 
-let button = html.Button(main, "Hello World", {
- id: "FirstBtn",
- class: "Button"
-});
+let button = html.Button(main, "Hello World");
 
 /**
  * All method function to the html Object has their parameter as
@@ -107,14 +98,15 @@ htmlPage.Build(main);
 ```
 
 Check This Page :
+
 - [Elements Documentation](docs/Elements.md)
 
 ## The Approach To Reactivity
 
-Signals have been revived al;l thanks to solid and qwik, so we use them too:
+roseview uses signals, showIF for the reactivity patern.
 
 ```javascript
-import { createSignal } from "./qwikview.es.js";
+import { createSignal } from "roseview";
 
 const onThemeChange = function (val) {
  if (getTheme() == "light") {
@@ -129,17 +121,13 @@ let [getTheme, setTheme, onThemeChange] = createSignal("light");
 // Access the values via getThene and setTheme
 ```
 
-Check This Page:
-
-- [Reactivity Docs](docs/Reactivity.md)
-
 ## showIF
 
 You can import showIF function which allows you to hide or show certain elements in a page.
 
 ```javascript
 
-import { showIF } from 'qwikview.es.js'
+import { showIF } from 'roseview'
 
 showIF(truthy_or_falsy_val, elementA, elementB);
 ```

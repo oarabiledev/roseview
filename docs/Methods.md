@@ -1,12 +1,12 @@
-# qwikView Methods >3
+# roseview Methods >3
 
-qwikView, has cloned most available htmlElements into functions/methods of the html Object.
+roseview, has cloned most available htmlElements into functions/methods of the html Object.
 
-All qwikView Elements have the same methods, initially i wanted to use a proxy which will allow us to access qwikView Methods and DOM Api methods, but the issue was lsp's could not give support and that made it a bad framework.
+All roseview Elements have the same methods, initially i wanted to use a proxy which will allow us to access roseview Methods and DOM Api methods, but the issue was lsp's could not give support and that made it a bad framework.
 
 > The objective is to switch to a proxy when the lsp support is great. But for now, use the Method method...
 
-## qwikView Methods
+## Methods
 
 ### animate
 
