@@ -5,15 +5,15 @@
 // MIT
 
 // @version
-// 0.0.3
+// 0.0.3.1
 
-const html = {
+const app = {
 	/**
 	 * Creates a special div which has options allowing
 	 * you to define the position of its children.
 	 * @param {string} type - The type of container (e.g., 'div', 'section').
 	 * @param {object} options - Options to define the container's properties (e.g., style, class).
-	 * @param {html} parent - The parent element to which the container will be appended.
+	 * @param {object} parent - The parent element to which the container will be appended.
 	 * @returns {htmlContainer} - A new htmlContainer instance.
 	 */
 	CreateLayout: (type, options, parent) => {
@@ -21,12 +21,12 @@ const html = {
 	},
 
 	Element: (parent, tag) => {
-		return new htmlControl(parent, tag);
+		return new htmlCreateElement(parent, tag);
 	},
 
 	/**
 	 * Creates a button element.
-	 * @param {html} parent - The parent element to which the button will be appended.
+	 * @param {object} parent - The parent element to which the button will be appended.
 	 * @param {string} text - The text content of the button.
 	 * @returns {htmlButton} - A new htmlButton instance.
 	 */
@@ -36,7 +36,7 @@ const html = {
 
 	/**
 	 * Creates an image element.
-	 * @param {html} parent - The parent element to which the image will be appended.
+	 * @param {object} parent - The parent element to which the image will be appended.
 	 * @param {string|string[]} sources - The source(s) of the image(s).
 	 * @returns {htmlImage} - A new htmlImage instance.
 	 */
@@ -46,7 +46,7 @@ const html = {
 
 	/**
 	 * Creates a text element.
-	 * @param {html} parent - The parent element to which the text will be appended.
+	 * @param {object} parent - The parent element to which the text will be appended.
 	 * @param {string} text - The text content.
 	 * @returns {htmlText} - A new htmlText instance.
 	 */
@@ -56,7 +56,7 @@ const html = {
 
 	/**
 	 * Creates a list element.
-	 * @param {html} parent - The parent element to which the list will be appended.
+	 * @param {object} parent - The parent element to which the list will be appended.
 	 * @param {string[]} list - An array of list items.
 	 * @returns {htmlList} - A new htmlList instance.
 	 */
@@ -66,7 +66,7 @@ const html = {
 
 	/**
 	 * Creates an input element.
-	 * @param {html} parent - The parent element to which the input will be appended.
+	 * @param {object} parent - The parent element to which the input will be appended.
 	 * @param {string} type - The type of input (e.g., 'text', 'checkbox').
 	 * @returns {htmlInput} - A new htmlInput instance.
 	 */
@@ -76,7 +76,7 @@ const html = {
 
 	/**
 	 * Creates a progress element.
-	 * @param {html} parent - The parent element to which the progress element will be appended.
+	 * @param {object} parent - The parent element to which the progress element will be appended.
 	 * @param {number} value - The initial value of the progress element.
 	 * @returns {htmlProgress} - A new htmlProgress instance.
 	 */
@@ -86,7 +86,7 @@ const html = {
 
 	/**
 	 * Creates a div element.
-	 * @param {html} parent - The parent element to which the div will be appended.
+	 * @param {object} parent - The parent element to which the div will be appended.
 	 * @returns {htmlDiv} - A new htmlDiv instance.
 	 */
 	Div: (parent) => {
@@ -95,7 +95,7 @@ const html = {
 
 	/**
 	 * Creates a paragraph element.
-	 * @param {html} parent - The parent element to which the paragraph will be appended.
+	 * @param {object} parent - The parent element to which the paragraph will be appended.
 	 * @param {string} text - The text content of the paragraph.
 	 * @returns {htmlParagraph} - A new htmlParagraph instance.
 	 */
@@ -105,7 +105,7 @@ const html = {
 
 	/**
 	 * Creates a header element.
-	 * @param {html} parent - The parent element to which the header will be appended.
+	 * @param {object} parent - The parent element to which the header will be appended.
 	 * @param {number} level - The level of the header (e.g., 1 for <h1>, 2 for <h2>).
 	 * @param {string} text - The text content of the header.
 	 * @returns {htmlHeader} - A new htmlHeader instance.
@@ -116,7 +116,7 @@ const html = {
 
 	/**
 	 * Creates an anchor (link) element.
-	 * @param {html} parent - The parent element to which the anchor will be appended.
+	 * @param {object} parent - The parent element to which the anchor will be appended.
 	 * @param {string} href - The URL the anchor points to.
 	 * @param {string} text - The text content of the anchor.
 	 * @returns {htmlAnchor} - A new htmlAnchor instance.
@@ -127,7 +127,7 @@ const html = {
 
 	/**
 	 * Creates a form element.
-	 * @param {html} parent - The parent element to which the form will be appended.
+	 * @param {object} parent - The parent element to which the form will be appended.
 	 * @returns {htmlForm} - A new htmlForm instance.
 	 */
 	Form: (parent) => {
@@ -136,7 +136,7 @@ const html = {
 
 	/**
 	 * Creates a table element.
-	 * @param {html} parent - The parent element to which the table will be appended.
+	 * @param {object} parent - The parent element to which the table will be appended.
 	 * @param {string[]} [headers=[]] - An array of table header titles.
 	 * @param {string[][]} [rows=[]] - A 2D array representing the rows and columns of the table.
 	 * @returns {htmlTable} - A new htmlTable instance.
@@ -147,7 +147,7 @@ const html = {
 
 	/**
 	 * Creates a select (dropdown) element.
-	 * @param {html} parent - The parent element to which the select will be appended.
+	 * @param {object} parent - The parent element to which the select will be appended.
 	 * @param {string[]} [options=[]] - An array of options for the dropdown.
 	 * @returns {htmlSelect} - A new htmlSelect instance.
 	 */
@@ -157,7 +157,7 @@ const html = {
 
 	/**
 	 * Creates an iframe element.
-	 * @param {html} parent - The parent element to which the iframe will be appended.
+	 * @param {object} parent - The parent element to which the iframe will be appended.
 	 * @param {string} src - The source URL of the iframe.
 	 * @returns {htmlIframe} - A new htmlIframe instance.
 	 */
@@ -167,7 +167,7 @@ const html = {
 
 	/**
 	 * Creates a label element.
-	 * @param {html} parent - The parent element to which the label will be appended.
+	 * @param {object} parent - The parent element to which the label will be appended.
 	 * @param {string} text - The text content of the label.
 	 * @returns {htmlLabel} - A new htmlLabel instance.
 	 */
@@ -177,7 +177,7 @@ const html = {
 
 	/**
 	 * Creates a video element.
-	 * @param {html} parent - The parent element to which the video will be appended.
+	 * @param {object} parent - The parent element to which the video will be appended.
 	 * @param {string|string[]} [sources=[]] - The source(s) of the video file(s).
 	 * @returns {htmlVideo} - A new htmlVideo instance.
 	 */
@@ -187,7 +187,7 @@ const html = {
 
 	/**
 	 * Creates an audio element.
-	 * @param {html} parent - The parent element to which the audio will be appended.
+	 * @param {object} parent - The parent element to which the audio will be appended.
 	 * @param {string|string[]} [sources=[]] - The source(s) of the audio file(s).
 	 * @returns {htmlAudio} - A new htmlAudio instance.
 	 */
@@ -197,7 +197,7 @@ const html = {
 
 	/**
 	 * Creates a textarea element.
-	 * @param {html} parent - The parent element to which the textarea will be appended.
+	 * @param {object} parent - The parent element to which the textarea will be appended.
 	 * @param {string} [value=""] - The initial text value of the textarea.
 	 * @returns {htmlTextarea} - A new htmlTextarea instance.
 	 */
@@ -207,7 +207,7 @@ const html = {
 
 	/**
 	 * Creates a fieldset element.
-	 * @param {html} parent - The parent element to which the fieldset will be appended.
+	 * @param {object} parent - The parent element to which the fieldset will be appended.
 	 * @param {string} [legendText=""] - The text for the fieldset's legend.
 	 * @returns {htmlFieldset} - A new htmlFieldset instance.
 	 */
@@ -217,7 +217,7 @@ const html = {
 
 	/**
 	 * Creates a datalist element.
-	 * @param {html} parent - The parent element to which the datalist will be appended.
+	 * @param {object} parent - The parent element to which the datalist will be appended.
 	 * @param {string[]} [options=[]] - An array of options for the datalist.
 	 * @returns {htmlDatalist} - A new htmlDatalist instance.
 	 */
@@ -260,7 +260,7 @@ const htmlControl = class {
 
 		return this;
 	}
-	
+
 	/**
 	 * Add multiple classes
 	 */
@@ -797,24 +797,31 @@ htmlControl.prototype._onAnimationEnd = function () {
 
 // Define individual classes for each HTML element that extends htmlControl
 
+const htmlCreateElement = class extends htmlControl {
+	constructor(parent, tag) {
+		super();
+		this.element = document.createElement(tag);
+
+		if (parent) parent.addChild(this);
+	}
+};
+
 const htmlButton = class extends htmlControl {
-	constructor(parent, text, props = {}) {
+	constructor(parent, text) {
 		super();
 		this.element = document.createElement("button");
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
 };
 
 const htmlImage = class extends htmlControl {
-	constructor(parent, sources, props = {}) {
+	constructor(parent, sources) {
 		super();
 		this.element = document.createElement("img");
 		this.element.src = sources[0]; // Assuming sources is an array of image URLs
 		if (sources.length > 1) this.element.srcset = sources.join(", ");
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -825,7 +832,6 @@ const htmlText = class extends htmlControl {
 		super();
 		this.element = document.createElement("span");
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -851,7 +857,6 @@ const htmlInput = class extends htmlControl {
 		super();
 		this.element = document.createElement("input");
 		this.element.type = type;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -862,7 +867,6 @@ const htmlProgress = class extends htmlControl {
 		super();
 		this.element = document.createElement("progress");
 		this.element.value = value;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -872,7 +876,6 @@ const htmlDiv = class extends htmlControl {
 	constructor(parent, props = {}) {
 		super();
 		this.element = document.createElement("div");
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -883,7 +886,6 @@ const htmlParagraph = class extends htmlControl {
 		super();
 		this.element = document.createElement("p");
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -894,7 +896,6 @@ const htmlHeader = class extends htmlControl {
 		super();
 		this.element = document.createElement(`h${level}`);
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -906,7 +907,6 @@ const htmlAnchor = class extends htmlControl {
 		this.element = document.createElement("a");
 		this.element.href = href;
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -916,7 +916,6 @@ const htmlForm = class extends htmlControl {
 	constructor(parent, props = {}) {
 		super();
 		this.element = document.createElement("form");
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -953,8 +952,6 @@ const htmlTable = class extends htmlControl {
 			this.element.appendChild(tbody);
 		}
 
-		props.options ? optionsApi(this.element, props.options) : null;
-
 		if (parent) parent.addChild(this);
 	}
 };
@@ -971,8 +968,6 @@ const htmlSelect = class extends htmlControl {
 			this.element.appendChild(opt);
 		});
 
-		props.options ? optionsApi(this.element, props.options) : null;
-
 		if (parent) parent.addChild(this);
 	}
 };
@@ -982,7 +977,6 @@ const htmlIframe = class extends htmlControl {
 		super();
 		this.element = document.createElement("iframe");
 		this.element.src = src;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -993,7 +987,6 @@ const htmlLabel = class extends htmlControl {
 		super();
 		this.element = document.createElement("label");
 		this.element.textContent = text;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1008,7 +1001,6 @@ const htmlVideo = class extends htmlControl {
 			source.src = src;
 			this.element.appendChild(source);
 		});
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1023,7 +1015,6 @@ const htmlAudio = class extends htmlControl {
 			source.src = src;
 			this.element.appendChild(source);
 		});
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1034,7 +1025,6 @@ const htmlTextarea = class extends htmlControl {
 		super();
 		this.element = document.createElement("textarea");
 		this.element.value = value;
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1049,7 +1039,6 @@ const htmlFieldset = class extends htmlControl {
 			legend.textContent = legendText;
 			this.element.appendChild(legend);
 		}
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1064,7 +1053,6 @@ const htmlDatalist = class extends htmlControl {
 			optionElement.value = option;
 			this.element.appendChild(optionElement);
 		});
-		props.options ? optionsApi(this.element, props.options) : null;
 
 		if (parent) parent.addChild(this);
 	}
@@ -1099,6 +1087,7 @@ const optionsApi = (element, options) => {
 		noscrollbar: () => {
 			element.classList.add("noscrollbar");
 		},
+
 		scrollxy: () => {
 			let className = cssParser({
 				overflow: "auto"
@@ -1281,7 +1270,10 @@ const htmlPage = {
 		} else return "light";
 	},
 
-	async SwitchLang(lang) {
+	/**
+	 * @param {any} lang
+	 */
+	set Lang(lang) {
 		currentLang = lang;
 		const elements = document.querySelectorAll("[data-translate-id]");
 		for (let element of elements) {

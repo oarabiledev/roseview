@@ -1,0 +1,16 @@
+>>>>>>>>>>>>>>> For Version 1.00 Release
+
+|||| Additions to app Objects
+
+* Add app.UpdateUI(ms)
+* Add app.Exit
+* Add app.Refresh
+* Add app.HttpRequest
+* Add app.Overlay
+
+
+|||| Add sys Objects
+
+* sys.HttpRequest
+* sys.Scroll ( use rellax scrolling library)
+* sys.Permissions

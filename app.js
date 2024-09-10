@@ -1,7 +1,7 @@
 // Main Testing Script For droidCity Features
 
-let main = html.CreateLayout("linear", "top, scrolly, center");
+let main = app.CreateLayout("linear", "top, scrolly, center");
 
-let input = html.Input(main);
+let input = app.Input(main, "checkbox");
 
 htmlPage.Build(main);
