@@ -5,12 +5,22 @@
 * Add app.UpdateUI(ms)
 * Add app.Exit
 * Add app.Refresh
-* Add app.HttpRequest
 * Add app.Overlay
 
+||| Add htmlPage methods
+
+* Support continous routing like : 'login/forgotpassword/auth'
+* Support file based routing
 
 |||| Add sys Objects
 
 * sys.HttpRequest
 * sys.Scroll ( use rellax scrolling library)
 * sys.Permissions
+
+
+************************************************** Version 0.0.3.3
+
+* Added Hash Based Page Routing (open, back, forwad methods)
+-> supports '/login' like routes
+-> no file based routing

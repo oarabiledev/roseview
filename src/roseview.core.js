@@ -5,9 +5,9 @@
 // MIT
 
 // @version
-// 0.0.3.1
+// 0.0.3.3
 
-const app = {
+const html = {
 	/**
 	 * Creates a special div which has options allowing
 	 * you to define the position of its children.
@@ -16,8 +16,8 @@ const app = {
 	 * @param {object} parent - The parent element to which the container will be appended.
 	 * @returns {htmlContainer} - A new htmlContainer instance.
 	 */
-	CreateLayout: (type, options, parent) => {
-		return new htmlContainer(type, options, parent);
+	CreateLayout: (route, type, options, parent) => {
+		return new htmlContainer(route, type, options, parent);
 	},
 
 	Element: (parent, tag) => {
@@ -242,6 +242,7 @@ const htmlControl = class {
 		const className = cssParser(styles);
 		this.element.classList.add(className);
 		this.elementClasses.push(className);
+		return this;
 	}
 
 	bindInput(signal) {
@@ -264,11 +265,12 @@ const htmlControl = class {
 	/**
 	 * Add multiple classes
 	 */
-	set addClasses(classes) {
+	set classes(classes) {
 		classes.split(" ").map((v) => {
 			this.element.classList.add(v);
 			this.elementClasses.push(v);
 		});
+		return this;
 	}
 
 	/**
@@ -279,6 +281,7 @@ const htmlControl = class {
 			this.element.classList.remove(v);
 			this.elementClasses.indexOf(v);
 		});
+		return this;
 	}
 
 	/**
@@ -286,12 +289,13 @@ const htmlControl = class {
 	 * In the context provided as an object.
 	 * @param {object} props
 	 */
-	props(props) {
+	batchProps(props) {
 		Object.entries(props).forEach(([key, value]) => {
 			requestAnimationFrame(() => {
 				this.element[key] = value;
 			});
 		});
+		return this;
 	}
 
 	/**
@@ -304,6 +308,7 @@ const htmlControl = class {
 		} else {
 			console.error("Mounted Child Is Not A htmlComponent");
 		}
+		return this;
 	}
 
 	/**
@@ -321,6 +326,7 @@ const htmlControl = class {
 		} else {
 			console.error("Child Is Not A htmlComponent");
 		}
+		return this;
 	}
 
 	/**
@@ -329,8 +335,9 @@ const htmlControl = class {
 	 * @param {Function} handler
 	 */
 	on(event, handler) {
-		this.addEventListener(event, handler);
-		this.eventListeners.push(["click", Fn]);
+		this.element.addEventListener(event, handler);
+		this.eventListeners.push(["click", handler]);
+		return this;
 	}
 
 	/**
@@ -346,6 +353,7 @@ const htmlControl = class {
 				visibility: "hidden"
 			});
 		}
+		return this;
 	}
 
 	/**
@@ -355,13 +363,16 @@ const htmlControl = class {
 	set gone(bool) {
 		if (bool) {
 			this.style({
-				display: "none"
+				display: "none !important",
+				visibility: "hidden"
 			});
 		} else {
 			this.style({
-				display: "block"
+				display: "block",
+				visibility: "visible"
 			});
 		}
+		return this;
 	}
 
 	/**
@@ -393,6 +404,7 @@ const htmlControl = class {
 				marginBottom: bottom
 			}
 		});
+		return this;
 	}
 
 	set setMargins(params) {
@@ -433,6 +445,7 @@ const htmlControl = class {
 			top: topv,
 			bottom: bottomv
 		});
+		return this;
 	}
 };
 
@@ -1059,10 +1072,12 @@ const htmlDatalist = class extends htmlControl {
 };
 
 const htmlContainer = class extends htmlControl {
-	constructor(type = "linear", options = "fillxy,vcenter", parent) {
+	constructor(route, type = "linear", options = "fillxy,vcenter", parent) {
 		super();
 		this.element = document.createElement("div");
 
+		htmlPage.Init();
+		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
 		type ? layoutFitApi(this.element, type, options) : null;
 	}
 };
@@ -1079,13 +1094,38 @@ let viewOptions = [
 	"horizontal",
 	"vertical",
 	"vcenter",
-	"center"
+	"center",
+	"fillxy",
+	"fillx",
+	"filly"
 ];
 
 const optionsApi = (element, options) => {
 	const functions = {
 		noscrollbar: () => {
 			element.classList.add("noscrollbar");
+		},
+
+		fillxy: () => {
+			let className = cssParser({
+				width: "100%",
+				height: window.innerHeight + "px"
+			});
+			element.classList.add(className);
+		},
+
+		fillx: () => {
+			let className = cssParser({
+				width: "100%"
+			});
+			element.classList.add(className);
+		},
+
+		filly: () => {
+			let className = cssParser({
+				height: window.innerHeight + "px"
+			});
+			element.classList.add(className);
 		},
 
 		scrollxy: () => {
@@ -1238,84 +1278,6 @@ const lockOrientation = async (orient) => {
 	}
 };
 
-const htmlPage = {
-	Build(mainContiner, routes) {
-		window.pathHistory = [];
-		document.addEventListener("DOMContentLoaded", () => {
-			mainContiner.style({
-				width: "100%",
-				height: window.innerHeight + "px"
-			});
-			document.body.style.margin = 0;
-			document.body.style.width = "100%";
-			let fragment = document.createDocumentFragment();
-			fragment.appendChild(mainContiner.element);
-			document.body.appendChild(fragment);
-		});
-	},
-
-	OpenPage(path) {
-		const script = document.html("script");
-		script.src = `./routes/${path}.js`;
-		script.type = "module";
-
-		document.body.replaceChildren();
-		document.body.appendChild(script);
-	},
-
-	get Theme() {
-		const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-		if (darkThemeMq.matches) {
-			return "dark";
-		} else return "light";
-	},
-
-	/**
-	 * @param {any} lang
-	 */
-	set Lang(lang) {
-		currentLang = lang;
-		const elements = document.querySelectorAll("[data-translate-id]");
-		for (let element of elements) {
-			const id = element.getAttribute("data-translate-id");
-			$T(id, lang)
-				.then((translation) => {
-					element.textContent = translation;
-				})
-				.catch((error) => {
-					element.textContent = "Error loading translation";
-				});
-		}
-	},
-
-	get Landscape() {
-		lockOrientation("landscape");
-		return "landscape";
-	},
-	get Portrait() {
-		lockOrientation("portrait");
-		return "portrait";
-	},
-
-	/**
-	 * @param {string} title
-	 */
-	set Title(title) {
-		document.title = title;
-	},
-
-	/**
-	 * @param {any} path
-	 */
-	set Icon(path) {
-		const link = document.querySelector("link[rel*='icon']") || document.html("link");
-		link.type = "image/x-icon";
-		link.rel = "shortcut icon";
-		link.href = path;
-		document.getElementsByTagName("head")[0].appendChild(link);
-	}
-};
-
 /**
  * creates a signal and returns an array of functions
  * that are destructured to achieve reactivity
@@ -1371,6 +1333,11 @@ const generateClassName = (() => {
 	return () => `roseview-class-${counter++}`;
 })();
 
+const generateContainerId = (() => {
+	let counter = 0;
+	return () => `roseview-container-${counter++}`;
+})();
+
 const cssParser = (styles) => {
 	const className = generateClassName();
 	const styleSheet = document.styleSheets[0] || document.head.appendChild(document.createElement("style")).sheet;
@@ -1423,4 +1390,167 @@ const cssParser = (styles) => {
 	});
 
 	return className;
+};
+
+const htmlPage = {
+	routeIndex: new Map(),
+	historyIndex: [],
+	originalUrl: window.location.pathname,
+
+	hiddenContainer: cssParser({
+		width: "0",
+		height: "0",
+		display: "none !important",
+		visibility: "hidden"
+	}),
+
+	Build(route, container) {
+		// Listen for popstate events to handle browser navigation
+		window.addEventListener("popstate", this.handleRouting);
+
+		if (route === "index") {
+			document.addEventListener("DOMContentLoaded", () => {
+				let fragment = document.createDocumentFragment();
+				fragment.appendChild(container.element);
+				document.body.appendChild(fragment);
+
+				this.historyIndex.push(route);
+				container.element.id = generateContainerId();
+				this.routeIndex.set(route, container.element.id);
+			});
+		} else {
+			let fragment = document.createDocumentFragment();
+			fragment.appendChild(container.element);
+			document.body.appendChild(fragment);
+
+			container.classes = this.hiddenContainer;
+			container.element.id = generateContainerId();
+			this.routeIndex.set(route, container.element.id);
+		}
+	},
+
+	Open(route, viewAnimations) {
+		if (!this.routeIndex.get(route)) return false;
+
+		let routeContainer = document.getElementById(this.routeIndex.get(route));
+		let lastRoute = this.historyIndex.slice(-1)[0];
+		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
+
+		if (lastRoute === route) return false;
+
+		lastRouteContainer.classList.add(this.hiddenContainer);
+		routeContainer.classList.remove(this.hiddenContainer);
+		this.historyIndex.push(route);
+
+		if (route === "index") {
+			history.pushState(null, "", window.location.origin);
+		} else history.pushState(null, "", `/${route}`);
+	},
+
+	handleRouting() {
+		const path = window.location.pathname.replace(/^\//, "").replace(/\.html$/, "");
+		console.log(window.location.pathname);
+		if (window.location.pathname === "/" || window.location.pathname === "") {
+			htmlPage.Open("index");
+		} else htmlPage.Open(path);
+	},
+
+	Back() {
+		let lastRoute = this.historyIndex.slice(-2)[0];
+		let currentRoute = this.historyIndex.slice(-1)[0];
+
+		if (!lastRoute) return false;
+		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
+		let currentRouteContainer = document.getElementById(this.routeIndex.get(currentRoute));
+
+		lastRouteContainer.classList.remove(this.hiddenContainer);
+		currentRouteContainer.classList.add(this.hiddenContainer);
+		this.historyIndex.push(lastRoute);
+
+		if (lastRoute === "index") {
+			history.pushState(null, "", this.originalUrl);
+		} else {
+			history.pushState(null, "", `/${lastRoute}`);
+			this.historyIndex.push(lastRoute);
+		}
+	},
+
+	Forward() {
+		let lastRoute = this.historyIndex.slice(-2)[0];
+		let currentRoute = this.historyIndex.slice(-1)[0];
+
+		if (lastRoute === currentRoute) return false;
+		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
+		let currentRouteContainer = document.getElementById(this.routeIndex.get(currentRoute));
+
+		lastRouteContainer.classList.remove(this.hiddenContainer);
+		currentRouteContainer.classList.add(this.hiddenContainer);
+		this.historyIndex.push(lastRoute);
+		history.pushState(null, "", `/${lastRoute}`);
+	},
+
+	Init() {
+		document.body.style.margin = 0;
+		document.body.style.width = "100%";
+	},
+
+	LoadStyle(dir) {
+		const link = document.createElement("link");
+		link.href = dir;
+		link.type = "text/css";
+		link.rel = "stylesheet";
+		document.head.appendChild(link);
+	},
+
+	get Theme() {
+		const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+		if (darkThemeMq.matches) {
+			return "dark";
+		} else return "light";
+	},
+
+	/**
+	 * @param {any} lang
+	 */
+	set Lang(lang) {
+		currentLang = lang;
+		const elements = document.querySelectorAll("[data-translate-id]");
+		for (let element of elements) {
+			const id = element.getAttribute("data-translate-id");
+			$T(id, lang)
+				.then((translation) => {
+					element.textContent = translation;
+				})
+				.catch((error) => {
+					element.textContent = "Error loading translation";
+				});
+		}
+	},
+
+	get Landscape() {
+		lockOrientation("landscape");
+		return "landscape";
+	},
+	get Portrait() {
+		lockOrientation("portrait");
+		return "portrait";
+	},
+
+	/**
+	 * @param {string} title
+	 */
+	set Title(title) {
+		document.title = title;
+	},
+
+	/**
+	 * @param {any} path
+	 */
+	set Icon(path) {
+		const link = document.querySelector("link[rel*='icon']") || document.html("link");
+		link.type = "image/x-icon";
+		link.rel = "shortcut icon";
+		link.href = path;
+		document.getElementsByTagName("head")[0].appendChild(link);
+	}
 };
