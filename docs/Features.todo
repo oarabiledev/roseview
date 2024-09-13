@@ -24,3 +24,5 @@
 * Added Hash Based Page Routing (open, back, forwad methods)
 -> supports '/login' like routes
 -> no file based routing
+-> Also added animations (htmlPage.Animation = []), but its
+   buggy.
