@@ -23,10 +23,22 @@ login.style({
 
 let input = html.Input(login, "text");
 
+let goSet = html.Button(login, "Settings");
+goSet.on("click", () => {
+	htmlPage.Open("settings");
+});
 let goBack = html.Button(login, "Go Back");
 goBack.on("click", () => {
 	htmlPage.Back();
 });
+
+let settings = html.CreateLayout("settings", "linear", "center, scrolly, fillxy");
+settings.setChildMargins = "null, 15px";
+settings.style({
+	backgroundColor: "red"
+});
+
+let inputB = html.Input(settings, "text");
 
 //htmlPage.Animations = ["slideInUp", "slideOutDown"];
 htmlPage.LoadStyle("main.css");

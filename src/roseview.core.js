@@ -809,6 +809,48 @@ htmlControl.prototype._onAnimationEnd = function () {
 	}
 };
 
+// Add sys objects for roseview
+
+const sys = {
+	HttpRequest: async (url, options = {}, retries = 3, timeout = 5000) => {
+		const timeout = function (ms) {
+			new Promise((_, reject) => {
+				setTimeout(() => {
+					reject(new Error(`Request Has Timed Out`));
+				}, ms);
+			});
+		};
+
+		// perform the fetch operation with retry logic
+		const fetch_with_retry = async (url, options, retries) => {
+			for (let attempt = 1; attempt <= retries; attempt++) {
+				try {
+					const response = await Promise.race([fetch(url, options), timeoutPromise(timeout)]);
+
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					return response;
+				} catch (error) {
+					if (attempt === retries) {
+						throw error;
+					}
+				}
+			}
+		};
+
+		try {
+			const response = await fetch_with_retry(url, options, retries);
+			const data = await response.json();
+			return data;
+		} catch (error) {
+			console.error("Fetch failed:", error);
+			throw error;
+		}
+	}
+};
+
 // Define individual classes for each HTML element that extends htmlControl
 
 const htmlCreateElement = class extends htmlControl {

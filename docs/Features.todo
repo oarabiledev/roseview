@@ -1,27 +1,24 @@
 >>>>>>>>>>>>>>> For Version 1.00 Release
 
-|||| Additions to app Objects
+||| Issues
 
-* Add app.UpdateUI(ms)
-* Add app.Exit
-* Add app.Refresh
-* Add app.Overlay
+* Fix routing
 
-||| Add htmlPage methods
+||| Features
 
 * Support continous routing like : 'login/forgotpassword/auth'
 * Support file based routing
 
-|||| Add sys Objects
+|||| Add Objects / Methods
 
 * sys.HttpRequest
-* sys.Scroll ( use rellax scrolling library)
-* sys.Permissions
+* .scrollEffect ( use rellax scrolling library)
+   under containers
 
 
-************************************************** Version 0.0.3.3
+** Version 0.0.3.3
 
-* Added Hash Based Page Routing (open, back, forwad methods)
+* Added Page Routing (open, back, forwad methods)
 -> supports '/login' like routes
 -> no file based routing
 -> Also added animations (htmlPage.Animation = []), but its
