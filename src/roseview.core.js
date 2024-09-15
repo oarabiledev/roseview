@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.0.3.3
+// 0.0.3.4
 
 "use strict";
 const html = {
@@ -813,7 +813,7 @@ htmlControl.prototype._onAnimationEnd = function () {
 
 const sys = {
 	HttpRequest: async (url, options = {}, retries = 3, timeout = 5000) => {
-		const timeout = function (ms) {
+		const timeout_function = function (ms) {
 			new Promise((_, reject) => {
 				setTimeout(() => {
 					reject(new Error(`Request Has Timed Out`));
@@ -825,7 +825,7 @@ const sys = {
 		const fetch_with_retry = async (url, options, retries) => {
 			for (let attempt = 1; attempt <= retries; attempt++) {
 				try {
-					const response = await Promise.race([fetch(url, options), timeoutPromise(timeout)]);
+					const response = await Promise.race([fetch(url, options), timeout_function(timeout)]);
 
 					if (!response.ok) {
 						throw new Error(`HTTP error! status: ${response.status}`);
@@ -1115,13 +1115,13 @@ const htmlDatalist = class extends htmlControl {
 };
 
 const htmlContainer = class extends htmlControl {
-	constructor(route, type = "linear", options = "fillxy,vcenter", parent) {
+	constructor(route, type = "linear", options = "fillxy,vcenter") {
 		super();
 		this.element = document.createElement("div");
 
 		htmlPage.Init();
-		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
 		type ? layoutFitApi(this.element, type, options) : null;
+		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
 	}
 };
 
@@ -1435,66 +1435,101 @@ const cssParser = (styles) => {
 	return className;
 };
 
-window.htmlPage = {
-	routeIndex: new Map(),
-	historyIndex: [],
-	viewAnimations: [],
+const htmlPage = {
+	routeMap: new Map(),
+	history: [],
+	pageTransitions: [],
+	suppressHashChange: false,
 	originalUrl: window.location.pathname,
 
 	hiddenContainer: cssParser({
 		display: "none !important",
-		visibility: "hidden"
+		visibility: "hidden !important"
 	}),
 
-	set Transitions(viewAnimations) {
-		viewAnimations ? (this.viewAnimations = viewAnimations) : [];
+	set Transitions(pageTransitions) {
+		pageTransitions ? (this.pageTransitions = pageTransitions) : [];
 	},
 
 	get Transitions() {
-		return this.viewAnimations;
+		return this.pageTransitions;
 	},
 
 	Build(route, container) {
-		// Listen for popstate events to handle browser navigation
-		window.addEventListener("popstate", this.handleRouting);
+		// Listen for hashchange events to handle browser navigation
+		window.onhashchange = this.handleHashChange.bind(this);
+		if (window.location.hash !== "#index") {
+			console.log("OnOpen Hash", window.location.hash);
+			this.handleHashChange(window.location.hash);
+		}
 
+		// Declare and save state of main view
 		if (route === "index") {
-			document.addEventListener("DOMContentLoaded", () => {
-				let fragment = document.createDocumentFragment();
-				fragment.appendChild(container.element);
-				document.body.appendChild(fragment);
+			let fragment = document.createDocumentFragment();
+			fragment.appendChild(container.element);
+			document.body.appendChild(fragment);
 
-				this.historyIndex.push(route);
-				container.element.id = generateContainerId();
-				this.routeIndex.set(route, container.element.id);
-			});
-		} else {
+			window.location.hash = `#index`;
+			this.suppressHashChange = true;
+			// Delay resetting the flag to allow the hash change to complete
+			setTimeout(() => {
+				this.suppressHashChange = false;
+			}, 100);
+
+			this.history.push(`#${route}`);
+			container.element.id = generateContainerId();
+			this.routeMap.set(`#${route}`, container.element.id);
+		}
+
+		// This condition is for things like toasts, bottomsheet & more
+		// condition will not add to thr routeMap
+		else if (route === null) {
 			let fragment = document.createDocumentFragment();
 			fragment.appendChild(container.element);
 			document.body.appendChild(fragment);
 
 			container.classes = this.hiddenContainer;
 			container.element.id = generateContainerId();
-			this.routeIndex.set(route, container.element.id);
+		}
+
+		// All other navigational containers here
+		else {
+			let fragment = document.createDocumentFragment();
+			fragment.appendChild(container.element);
+			document.body.appendChild(fragment);
+
+			container.element.classList.add(this.hiddenContainer);
+			container.element.id = generateContainerId();
+			this.routeMap.set(`#${route}`, container.element.id);
 		}
 	},
 
-	Open(route, viewAnimations) {
-		if (!this.routeIndex.get(route)) return false;
-		viewAnimations ? (this.viewAnimations = viewAnimations) : false;
+	Open(route, pageTransitions) {
+		if (!this.routeMap.get(route)) {
+			return false;
+		}
+		pageTransitions ? (this.pageTransitions = pageTransitions) : false;
 
-		let path = window.location.pathname.replace(/^\//, "").replace(/\.html$/, "");
+		let path = window.location.hash;
+		if (path === "" || path === "/") path = "#index";
 
-		if (window.location.pathname === "/" || window.location.pathname === "") path = "index";
-		let route_to_show = document.getElementById(this.routeIndex.get(route));
+		if (route === " " || route === "/") {
+			route = "#index";
+			console.log(route === path);
+		}
 
-		let route_to_hide = document.getElementById(this.routeIndex.get(path));
+		if (path === route) {
+			path = this.history.slice(-1)[0];
+			console.log(`Adjusted Path : ${route}`);
+		}
 
-		if (path === route) return false;
+		console.log(`Current Path : ${path}, Opening : ${route}`);
+		let route_to_show = document.getElementById(this.routeMap.get(route));
 
-		console.log(`hiiden : ${this.hiddenContainer}`);
-		if (viewAnimations || this.viewAnimations) {
-			let [animationIn] = viewAnimations || this.viewAnimations;
+		let route_to_hide = document.getElementById(this.routeMap.get(path));
+
+		if (pageTransitions === true || this.pageTransitions === true) {
+			let [animationIn] = pageTransitions || this.pageTransitions;
 
 			route_to_show.classList.remove(this.hiddenContainer);
 			route_to_show.classList.add("animate__animated", `animate__${animationIn}`);
@@ -1506,85 +1541,60 @@ window.htmlPage = {
 		} else {
 			// If no animation, simply hide the last container and show the new one
 			route_to_hide.classList.add(this.hiddenContainer);
+
 			route_to_show.classList.remove(this.hiddenContainer);
 		}
 
-		this.historyIndex.push(route);
+		this.history.push(route);
+		window.location.hash = route;
 
-		if (route === "index") {
-			history.pushState(null, "", window.location.origin);
-		} else history.pushState(null, "", `/${route}`);
+		this.suppressHashChange = true;
+		// Delay resetting the flag to allow the hash change to complete
+		setTimeout(() => {
+			this.suppressHashChange = false;
+		}, 100);
 	},
 
-	handleRouting() {
-		const path = window.location.pathname.replace(/^\//, "").replace(/\.html$/, "");
+	backCounter: 2,
 
-		if (window.location.pathname === "/" || window.location.pathname === "") {
-			htmlPage.Open("index");
-		} else htmlPage.Open(path);
+	handleHashChange() {
+		// Ignore the hash change if suppressHashChange is true
+		if (this.suppressHashChange) {
+			return false;
+		}
+		const path = window.location.hash;
+
+		// Sync history when hash changes via browser navigation
+		if (!this.history.includes(path)) {
+			this.history.push(path); // Update the custom history
+		}
+		if (path === "/" || path === "") path = "#index";
+		console.log(`handleHashFN : ${path}`);
+		htmlPage.Open(path);
 	},
 
-	Back() {
-		let lastRoute = this.historyIndex.slice(-2)[0];
+	Back(pageTransitions) {
+		let lastRoute = this.history.slice(-this.backCounter)[0];
+		alert(lastRoute);
 
-		let path = window.location.pathname.replace(/^\//, "").replace(/\.html$/, "");
+		// Find the index of lastRoute in the history array
+		let index = this.history.indexOf(lastRoute);
 
-		if (window.location.pathname === "/" || window.location.pathname === "") path = "index";
-		let [animationIn, animationOut] = this.viewAnimations || [];
-
-		if (!lastRoute) return false;
-		let route_to_show = document.getElementById(this.routeIndex.get(lastRoute));
-		let route_to_hide = document.getElementById(this.routeIndex.get(path));
-
-		console.log(`hiiden : ${this.hiddenContainer}`);
-		if (this.viewAnimations) {
-			route_to_hide.classList.add("animate__animated", `animate__${animationOut}`);
-
-			route_to_hide.addEventListener("animationend", function handleAnimationEnd() {
-				route_to_hide.classList.remove("animate__animated", `animate__${animationOut}`);
-
-				route_to_show.classList.remove(this.hiddenContainer);
-				route_to_hide.removeEventListener("animationend", handleAnimationEnd);
-			});
-			route_to_hide.classList.add(this.hiddenContainer);
-		} else {
-			route_to_hide.classList.add(this.hiddenContainer);
-			route_to_show.classList.remove(this.hiddenContainer);
+		if (index > -1) {
+			// Remove lastRoute from the history array
+			this.history.splice(index, 1);
 		}
 
-		this.historyIndex.push(lastRoute);
+		console.log(lastRoute, "lastRoute");
+		htmlPage.Open(lastRoute, pageTransitions);
 
-		if (lastRoute === "index") {
-			history.pushState(null, "", this.originalUrl);
-		} else {
-			history.pushState(null, "", `/${lastRoute}`);
-			this.historyIndex.push(lastRoute);
+		// Increment the backCounter after each call
+		this.backCounter++;
+
+		// Optional: Reset backCounter when needed, for example, if it exceeds history length
+		if (this.backCounter > this.history.length) {
+			this.backCounter = 2; // Reset to -2 when we have gone through all available history
 		}
-	},
-
-	Forward() {
-		let lastRoute = this.historyIndex.slice(-2)[0];
-		let currentRoute = this.historyIndex.slice(-1)[0];
-		let [animationIn, animationOut] = this.viewAnimations || [];
-
-		if (lastRoute === currentRoute) return false;
-		let route_to_hide = document.getElementById(this.routeIndex.get(lastRoute));
-		let route_to_show = document.getElementById(this.routeIndex.get(currentRoute));
-
-		if (this.viewAnimations) {
-			route_to_hide.classList.remove(this.hiddenContainer);
-			route_to_hide.classList.add("animate__animated", `animate__${animationIn}`);
-
-			route_to_hide.addEventListener("animationend", () => {
-				route_to_hide.classList.remove("animate__animated", `animate__${animationIn}`);
-				route_to_show.classList.add(this.hiddenContainer);
-			});
-		} else {
-			route_to_hide.classList.add(this.hiddenContainer);
-			route_to_show.classList.remove(this.hiddenContainer);
-		}
-		this.historyIndex.push(lastRoute);
-		history.pushState(null, "", `/${lastRoute}`);
 	},
 
 	Init() {

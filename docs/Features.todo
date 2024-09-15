@@ -1,12 +1,8 @@
 >>>>>>>>>>>>>>> For Version 1.00 Release
 
-||| Issues
-
-* Fix routing
-
 ||| Features
 
-* Support continous routing like : 'login/forgotpassword/auth'
+* Support continous routing like : '/#login/#forgotpassword/#auth'
 * Support file based routing
 
 |||| Add Objects / Methods
@@ -16,10 +12,10 @@
    under containers
 
 
-** Version 0.0.3.3
+** Version 0.0.3.4
 
-* Added Page Routing (open, back, forwad methods)
--> supports '/login' like routes
+* Added Hash Based Page Routing (open, back, methods)
+-> supports '/#login' like routes
 -> no file based routing
 -> Also added animations (htmlPage.Animation = []), but its
    buggy.

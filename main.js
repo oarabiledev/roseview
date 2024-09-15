@@ -7,7 +7,7 @@ nav_title.classes = "pacifico-regular";
 
 let loginBtn = html.Button(main, "Open Login Page");
 loginBtn.on("click", () => {
-	htmlPage.Open("login");
+	htmlPage.Open("#login");
 });
 
 let forwardBtn = html.Button(main, "Go Forward");
@@ -25,7 +25,7 @@ let input = html.Input(login, "text");
 
 let goSet = html.Button(login, "Settings");
 goSet.on("click", () => {
-	htmlPage.Open("settings");
+	htmlPage.Open("#settings");
 });
 let goBack = html.Button(login, "Go Back");
 goBack.on("click", () => {
@@ -40,5 +40,14 @@ settings.style({
 
 let inputB = html.Input(settings, "text");
 
+let goBackB = html.Button(settings, "Go Back");
+goBackB.on("click", () => {
+	htmlPage.Back();
+});
+
+let goBackC = html.Button(settings, "Go Home");
+goBackC.on("click", () => {
+	htmlPage.Open("#index");
+});
 //htmlPage.Animations = ["slideInUp", "slideOutDown"];
 htmlPage.LoadStyle("main.css");

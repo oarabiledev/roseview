@@ -5,8 +5,9 @@
 // MIT
 
 // @version
-// 0.0.3.3
+// 0.0.3.4
 
+"use strict";
 const html = {
 	/**
 	 * Creates a special div which has options allowing
@@ -336,7 +337,7 @@ const htmlControl = class {
 	 */
 	on(event, handler) {
 		this.element.addEventListener(event, handler);
-		this.eventListeners.push(["click", handler]);
+		this.eventListeners.push([event, handler]);
 		return this;
 	}
 
@@ -808,6 +809,48 @@ htmlControl.prototype._onAnimationEnd = function () {
 	}
 };
 
+// Add sys objects for roseview
+
+const sys = {
+	HttpRequest: async (url, options = {}, retries = 3, timeout = 5000) => {
+		const timeout_function = function (ms) {
+			new Promise((_, reject) => {
+				setTimeout(() => {
+					reject(new Error(`Request Has Timed Out`));
+				}, ms);
+			});
+		};
+
+		// perform the fetch operation with retry logic
+		const fetch_with_retry = async (url, options, retries) => {
+			for (let attempt = 1; attempt <= retries; attempt++) {
+				try {
+					const response = await Promise.race([fetch(url, options), timeout_function(timeout)]);
+
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					return response;
+				} catch (error) {
+					if (attempt === retries) {
+						throw error;
+					}
+				}
+			}
+		};
+
+		try {
+			const response = await fetch_with_retry(url, options, retries);
+			const data = await response.json();
+			return data;
+		} catch (error) {
+			console.error("Fetch failed:", error);
+			throw error;
+		}
+	}
+};
+
 // Define individual classes for each HTML element that extends htmlControl
 
 const htmlCreateElement = class extends htmlControl {
@@ -1072,13 +1115,13 @@ const htmlDatalist = class extends htmlControl {
 };
 
 const htmlContainer = class extends htmlControl {
-	constructor(route, type = "linear", options = "fillxy,vcenter", parent) {
+	constructor(route, type = "linear", options = "fillxy,vcenter") {
 		super();
 		this.element = document.createElement("div");
 
 		htmlPage.Init();
-		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
 		type ? layoutFitApi(this.element, type, options) : null;
+		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
 	}
 };
 
@@ -1393,100 +1436,165 @@ const cssParser = (styles) => {
 };
 
 const htmlPage = {
-	routeIndex: new Map(),
-	historyIndex: [],
+	routeMap: new Map(),
+	history: [],
+	pageTransitions: [],
+	suppressHashChange: false,
 	originalUrl: window.location.pathname,
 
 	hiddenContainer: cssParser({
-		width: "0",
-		height: "0",
 		display: "none !important",
-		visibility: "hidden"
+		visibility: "hidden !important"
 	}),
 
+	set Transitions(pageTransitions) {
+		pageTransitions ? (this.pageTransitions = pageTransitions) : [];
+	},
+
+	get Transitions() {
+		return this.pageTransitions;
+	},
+
 	Build(route, container) {
-		// Listen for popstate events to handle browser navigation
-		window.addEventListener("popstate", this.handleRouting);
+		// Listen for hashchange events to handle browser navigation
+		window.onhashchange = this.handleHashChange.bind(this);
+		if (window.location.hash !== "#index") {
+			console.log("OnOpen Hash", window.location.hash);
+			this.handleHashChange(window.location.hash);
+		}
 
+		// Declare and save state of main view
 		if (route === "index") {
-			document.addEventListener("DOMContentLoaded", () => {
-				let fragment = document.createDocumentFragment();
-				fragment.appendChild(container.element);
-				document.body.appendChild(fragment);
+			let fragment = document.createDocumentFragment();
+			fragment.appendChild(container.element);
+			document.body.appendChild(fragment);
 
-				this.historyIndex.push(route);
-				container.element.id = generateContainerId();
-				this.routeIndex.set(route, container.element.id);
-			});
-		} else {
+			window.location.hash = `#index`;
+			this.suppressHashChange = true;
+			// Delay resetting the flag to allow the hash change to complete
+			setTimeout(() => {
+				this.suppressHashChange = false;
+			}, 100);
+
+			this.history.push(`#${route}`);
+			container.element.id = generateContainerId();
+			this.routeMap.set(`#${route}`, container.element.id);
+		}
+
+		// This condition is for things like toasts, bottomsheet & more
+		// condition will not add to thr routeMap
+		else if (route === null) {
 			let fragment = document.createDocumentFragment();
 			fragment.appendChild(container.element);
 			document.body.appendChild(fragment);
 
 			container.classes = this.hiddenContainer;
 			container.element.id = generateContainerId();
-			this.routeIndex.set(route, container.element.id);
+		}
+
+		// All other navigational containers here
+		else {
+			let fragment = document.createDocumentFragment();
+			fragment.appendChild(container.element);
+			document.body.appendChild(fragment);
+
+			container.element.classList.add(this.hiddenContainer);
+			container.element.id = generateContainerId();
+			this.routeMap.set(`#${route}`, container.element.id);
 		}
 	},
 
-	Open(route, viewAnimations) {
-		if (!this.routeIndex.get(route)) return false;
+	Open(route, pageTransitions) {
+		if (!this.routeMap.get(route)) {
+			return false;
+		}
+		pageTransitions ? (this.pageTransitions = pageTransitions) : false;
 
-		let routeContainer = document.getElementById(this.routeIndex.get(route));
-		let lastRoute = this.historyIndex.slice(-1)[0];
-		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
+		let path = window.location.hash;
+		if (path === "" || path === "/") path = "#index";
 
-		if (lastRoute === route) return false;
+		if (route === " " || route === "/") {
+			route = "#index";
+			console.log(route === path);
+		}
 
-		lastRouteContainer.classList.add(this.hiddenContainer);
-		routeContainer.classList.remove(this.hiddenContainer);
-		this.historyIndex.push(route);
+		if (path === route) {
+			path = this.history.slice(-1)[0];
+			console.log(`Adjusted Path : ${route}`);
+		}
 
-		if (route === "index") {
-			history.pushState(null, "", window.location.origin);
-		} else history.pushState(null, "", `/${route}`);
-	},
+		console.log(`Current Path : ${path}, Opening : ${route}`);
+		let route_to_show = document.getElementById(this.routeMap.get(route));
 
-	handleRouting() {
-		const path = window.location.pathname.replace(/^\//, "").replace(/\.html$/, "");
-		console.log(window.location.pathname);
-		if (window.location.pathname === "/" || window.location.pathname === "") {
-			htmlPage.Open("index");
-		} else htmlPage.Open(path);
-	},
+		let route_to_hide = document.getElementById(this.routeMap.get(path));
 
-	Back() {
-		let lastRoute = this.historyIndex.slice(-2)[0];
-		let currentRoute = this.historyIndex.slice(-1)[0];
+		if (pageTransitions === true || this.pageTransitions === true) {
+			let [animationIn] = pageTransitions || this.pageTransitions;
 
-		if (!lastRoute) return false;
-		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
-		let currentRouteContainer = document.getElementById(this.routeIndex.get(currentRoute));
+			route_to_show.classList.remove(this.hiddenContainer);
+			route_to_show.classList.add("animate__animated", `animate__${animationIn}`);
 
-		lastRouteContainer.classList.remove(this.hiddenContainer);
-		currentRouteContainer.classList.add(this.hiddenContainer);
-		this.historyIndex.push(lastRoute);
-
-		if (lastRoute === "index") {
-			history.pushState(null, "", this.originalUrl);
+			// Listen for the animation end on the last route container
+			route_to_show.addEventListener("animationend", function handleAnimationEnd() {
+				route_to_hide.classList.add(this.hiddenContainer);
+			});
 		} else {
-			history.pushState(null, "", `/${lastRoute}`);
-			this.historyIndex.push(lastRoute);
+			// If no animation, simply hide the last container and show the new one
+			route_to_hide.classList.add(this.hiddenContainer);
+
+			route_to_show.classList.remove(this.hiddenContainer);
 		}
+
+		this.history.push(route);
+		window.location.hash = route;
+
+		this.suppressHashChange = true;
+		// Delay resetting the flag to allow the hash change to complete
+		setTimeout(() => {
+			this.suppressHashChange = false;
+		}, 100);
 	},
 
-	Forward() {
-		let lastRoute = this.historyIndex.slice(-2)[0];
-		let currentRoute = this.historyIndex.slice(-1)[0];
+	backCounter: 2,
 
-		if (lastRoute === currentRoute) return false;
-		let lastRouteContainer = document.getElementById(this.routeIndex.get(lastRoute));
-		let currentRouteContainer = document.getElementById(this.routeIndex.get(currentRoute));
+	handleHashChange() {
+		// Ignore the hash change if suppressHashChange is true
+		if (this.suppressHashChange) {
+			return false;
+		}
+		const path = window.location.hash;
 
-		lastRouteContainer.classList.remove(this.hiddenContainer);
-		currentRouteContainer.classList.add(this.hiddenContainer);
-		this.historyIndex.push(lastRoute);
-		history.pushState(null, "", `/${lastRoute}`);
+		// Sync history when hash changes via browser navigation
+		if (!this.history.includes(path)) {
+			this.history.push(path); // Update the custom history
+		}
+		if (path === "/" || path === "") path = "#index";
+		console.log(`handleHashFN : ${path}`);
+		htmlPage.Open(path);
+	},
+
+	Back(pageTransitions) {
+		let lastRoute = this.history.slice(-this.backCounter)[0];
+		alert(lastRoute);
+
+		// Find the index of lastRoute in the history array
+		let index = this.history.indexOf(lastRoute);
+
+		if (index > -1) {
+			// Remove lastRoute from the history array
+			this.history.splice(index, 1);
+		}
+
+		console.log(lastRoute, "lastRoute");
+		htmlPage.Open(lastRoute, pageTransitions);
+
+		// Increment the backCounter after each call
+		this.backCounter++;
+
+		// Optional: Reset backCounter when needed, for example, if it exceeds history length
+		if (this.backCounter > this.history.length) {
+			this.backCounter = 2; // Reset to -2 when we have gone through all available history
+		}
 	},
 
 	Init() {
@@ -1494,6 +1602,9 @@ const htmlPage = {
 		document.body.style.width = "100%";
 	},
 
+	/**'
+	 * Load StyleSheet
+	 */
 	LoadStyle(dir) {
 		const link = document.createElement("link");
 		link.href = dir;
@@ -1502,6 +1613,9 @@ const htmlPage = {
 		document.head.appendChild(link);
 	},
 
+	/**
+	 * Get System Theme
+	 */
 	get Theme() {
 		const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 		if (darkThemeMq.matches) {
@@ -1527,13 +1641,25 @@ const htmlPage = {
 		}
 	},
 
-	get Landscape() {
-		lockOrientation("landscape");
-		return "landscape";
+	/**
+	 * Set the page orientation,
+	 * use landscape or portrait
+	 */
+	set Orient(val) {
+		if (val.toLowerCase() === "landscape") {
+			lockOrientation("landscape");
+			this.Orient = "landscape";
+		} else {
+			lockOrientation("portrait");
+			this.Orient = "portrait";
+		}
 	},
-	get Portrait() {
-		lockOrientation("portrait");
-		return "portrait";
+
+	/**
+	 * Get Page Orientation
+	 */
+	get Orient() {
+		return this.Orient;
 	},
 
 	/**
