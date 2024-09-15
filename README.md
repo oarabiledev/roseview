@@ -273,8 +273,7 @@ htmlPage.Orient
 
 ### Achieving Reactivity
 
-- signalsThat is the barebones needed to get started with the framework.
-Thank You For Your Interest ❣️
+- signals
 
 - showIF
 
