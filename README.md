@@ -1,25 +1,19 @@
-![roseview Banner](docs/roseview.png)
+# What Is RoseView ?
 
-# roseview
+Roseview is a client side framework, designed to simplify the creation of single page applications and mulitipage applications. Roseview uses the android model and mixes it with the html model.
 
-roseview allows developers to control all ui, using javascript and that makes achieving reactivity easier.
+- RoseView uses the concept of layouts
+- RoseView uses hashbased routing for quicker navigation and file based routing for views with many elements
 
-Before libraries were a thing, the way forwad on ui was narrow minded, it was all about separation of concerns and that worked for a while, before we realized we could go crazy with the web.
+## Why RoseView ?
 
-There are many frameworks and we are just one of them, all built for different niche cases, here is a tip :
+Many ideas have come up on how web development should be done, however not many frameworks rely on using pure syntacticall javascript. Some use jsx and others create their own.
 
-> **_NOTE:_** For pages that ussually are demo pages, I dont recommend use of any framework.
+roseview aims to be simple and easy to master.
 
-Now that we have de-mistified the purpose of all frameworks, here is what makes roseview different :
+## Installation
 
-- Can be used without a build step
-- We build everything and use only a few external libraries
-- It is easier to understand and build complex things with
-- Codebase scales atleast in a visiually appealing way.
-
-## Getting Started > 3
-
-Firstly link to the file in your html :
+There is no installation, just add this script tag to your `index.html` file :
 
 ```html
 <script src="roseview.core.js"></script>
@@ -27,124 +21,269 @@ Firstly link to the file in your html :
 <script src="roseview.es.js" type="module"></script>
 /** Or */
 <script src="https://www.unpkg.com/roseview" type="module"></script>
-```
 
-Now the next focus is your main file, you can call it : `app.js` or `main.js` :
+/**Dont Forget To Add Your Main Script File */
+````
 
-```javascript
-/**
- * We use the concept of layouts, these are special divs - you
- * pass in parameters and  those specify the direction and
- * flow of  elements in them.
- */
+## Getting Started
 
-import { html, htmlPage } from "roseview";
+Even though typescript was not used, i have tried to add jsdoc on the relevant pieces that you will interact with.
 
-// let main = html.CreateLayout(type, options);
+### The Concept Of Layouts
 
-/**
- * The type is which type of special div you want, ther
- * is the linear div ( content flows in columnar form )
- * and we have absolute ( the polar opposite of linear)
- * lastly we have the frame, which will allow us to
- * place stuff over each other.
- */
-
-let main = html.CreateLayout("linear", "top, vertical, scrolly");
-
-/**
- * For options these specify de=irection and how the main view
- * behaves, we have the following options :
- * center, left, right
- * top, bottom,
- * scrolly, scrollx
- * noscrollbar,
- * fillx, filly, fillxy
- */
-
-// htmlPage.Build(mainContainer, appRoutes)
-// Now add the layout to the body.
-htmlPage.Build(main);
-```
-
-You have a simple roseview app now, to add elements like buttons and Images, they are all methods in the html Object.
-
-> Refer To The Elements.md Page For more Info
-
-### Basic Elements >3
-
-Here is a display of basic htmlelements in use :
+A layout is a special div that takes in parameters like the hash route, type of layout, alignment options.
 
 ```javascript
-let main = html.CreateLayout("linear", "center");
+let main = html.CreateLayout(route, type, alignmentOptions);
 
-let button = html.Button(main, "Hello World");
+// If page is main, write in this manner 
 
-/**
- * All method function to the html Object has their parameter as
- * the parent :
- * This adds them to that layout, you can use
- * addChild as an alternative
- * (for adding layouts on other layouts)
- *
- * Then have the main param of that element, for an image
- * it will be an array of urls to that image
- *
- * Then finally the props, use gerenal DOM setters in here
- * as an object.
- */
 
-htmlPage.Build(main);
-```
+let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
+````
 
-Check This Page :
+The option "FillXY", is useful for fullscreen layouts, layouts can be created to form a toast, banner, bottomsheet but must have their route as *null*.
 
-- [Elements Documentation](docs/Elements.md)
+#### Types Of Layouts & Alignment Options
 
-## The Approach To Reactivity
+The main type of layouts is a linear one, if you want to position elements anywhere use an absolute layout
 
-roseview uses signals, showIF for the reactivity patern.
+Alignment options available are :
+
+- center / vcenter (vertically centerd)
+- left / right
+- noscrollbar
+- bottom / top
+- filly / fillx / fillxy
+- horizontal / vertical
+- scrolly / scrollx / scrollxy
+
+### Then Everything Else
+
+The `html` object has many available html elements (Buttons / Images) which are exposed after adding the '.'
 
 ```javascript
-import { createSignal } from "roseview";
+html.Button
+html.Image
+````
 
-const onThemeChange = function (val) {
- if (getTheme() == "light") {
-  // change all elements to light mode
- } else {
-  // change all elements to dark mode
- }
-};
+However if the html element you want to use is not available or you are using special tags, use this :
 
-let [getTheme, setTheme, onThemeChange] = createSignal("light");
-
-// Access the values via getThene and setTheme
+```javascript
+html.Element(parent, HTMLELEMENT)
 ```
 
-## showIF
+All functions of this object take in the first parameter as the parent, basically the layout they must attach to, then the following parameters are exposed through the lsp (jsDOC also available).
 
-You can import showIF function which allows you to hide or show certain elements in a page.
+### Page Routing
+
+For now roseview supports only hash based routing which is still buggy but a fix is being deployed.
+
+The first parameter of layouts is the hash route therefore they can be added in this manner :
 
 ```javascript
 
-import { showIF } from 'roseview'
+let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
+main.setChildMargins = "null, 15px";
+let nav_title = html.Text(main, "Main Page");
+nav_title.classes = "pacifico-regular";
 
-showIF(truthy_or_falsy_val, elementA, elementB);
+let loginBtn = html.Button(main, "Open Login Page");
+loginBtn.on("click", () => {
+ htmlPage.Open("login");
+});
+
+let forwardBtn = html.Button(main, "Go Forward");
+forwardBtn.on("click", () => {
+ htmlPage.Forward();
+});
+
+let login = html.CreateLayout("login", "linear", "center, scrolly, fillxy");
+login.setChildMargins = "null, 15px";
+login.style({
+ backgroundColor: "yellow"
+});
+
+let input = html.Input(login, "text");
+
+let goSet = html.Button(login, "Settings");
+goSet.on("click", () => {
+ htmlPage.Open("settings");
+});
+let goBack = html.Button(login, "Go Back");
+goBack.on("click", () => {
+ htmlPage.Back();
+});
+
+let settings = html.CreateLayout("settings", "linear", "center, scrolly, fillxy");
+settings.setChildMargins = "null, 15px";
+settings.style({
+ backgroundColor: "red"
+});
+
+let inputB = html.Input(settings, "text");
+
+//htmlPage.Transitions = ["slideInUp", "slideOutDown"];
+htmlPage.LoadStyle("main.css");
 ```
+
+Additionaly you can add page transitions as you switch pages using the `htmlPage.Transitions` method.
+
+### Styling Elements
+
+To style your elements use the `.style` method which takes in an object and converts it into a style.
+
+```javascript
+txt.style({
+   position: "relative",
+   lineHeight : "18px",
+
+   "&:active": {
+    boxShadow: "0px, 0px, 0px, 0px",
+    top: "5px",
+    left: "5px"
+   }
+
+   "*" : {
+    color: "red
+   }
+})
+```
+
+#### Adding Classes
+
+If you want to add classes use :
+
+```javascript
+btn.classes = 'class1 classB classH'
+// To Remove
+btn.removeClasses = 'class1'
+```
+
+#### DX Improvements
+
+There is the `setMargins / setChildMargins / setPosition` getters which allow you to change spacing without editing css directly.
+
+```javascript
+let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
+main.setChildMargins = "null, 15px";
+````
+
+Additionally to modify properties without adding stress to the DOM use the `batchProps` method which takes in an object of modifications and uses `requestAnimationFrame`.
+
+```javascript
+btn.props({
+textContent : 'Hi',
+style.color : 'red'
+})
+```
+
+#### Element Control
+
+##### Show / Gone
+
+These are getters set true to comply with function condition
+Gone make the elements hide and not visible while not taking space.
+
+#### On
+
+This is an event listener method, use as
+
+```javascript
+let loginBtn = html.Button(main, "Open Login Page");
+
+loginBtn.on("click", () => {
+ htmlPage.Open("login");
+});
+```
+
+#### bindInput
+
+This method binds a signal (where input is) to where input is displayed at.
+
+#### addChild / destroyChild
+
+If you want to add an element as a child of another use addChild, then to destroy the element use destroyChild.
+
+Check This Page:
+
+- [Methods Docs](docs/Methods.md)
+
+#### Animations
+
+Use the animationSequence method which allows you to use these methods to animate elements
+
+```console
+scale(x, y, duration, delay);
+
+scaleX(x, duration, delay);
+
+scaleY(y, duration, delay);
+
+alpha(alpha, duration, delay);
+
+end();
+
+rotate(angle, duration, delay);
+
+rotateX(angle, duration, delay);
+
+rotateY(angle, duration, delay);
+
+then();
+
+position, positionX, positionY;
+
+translate, translateX, translateY;
+
+setOnStart();
+
+setOnCompleted();
+
+start();
+```
+
+Check This Page:
+
+- [Animation Docs](docs/Animation.md)
+
+### Accesing DOM Methods
+
+To use the  available javascript methods add 'element' to the caller.
+
+````javascript
+btn.element.textContent = 'DOM Access'
+````
+
+### htmlPage Object
+
+This object allows you to tweak thing like the title, set icons, the most poweful are moving pages.
+
+```javascript
+
+htmlPage.Open(route, transitions)
+htmlPage.Back()
+htmlPage.Forward()
+htmlPage.LoadStyle()
+htmlPage.LoadScript()
+htmlPage.Theme
+htmlPage.Lang
+htmlPage.Orient
+```
+
+### Achieving Reactivity
+
+- signalsThat is the barebones needed to get started with the framework.
+Thank You For Your Interest ❣️
+
+- showIF
 
 Check This Page:
 
 - [Reactivity Docs](docs/Reactivity.md)
 
-That is the barebones needed to get started with the framework.
+All that is the barebones needed to get started with the framework.
+
+You can help implement features or view progress by inspecting the [Features Page](docs/Features.todo)
+
 Thank You For Your Interest ❣️
-
-For the next step I suggest you check :
-
-- [Methods Documentation](docs/Methods.md)
-
-- [Elements Documentation](docs/Elements.md)
-
-- [Reactivity Docs](docs/Reactivity.md)
-
-- [Animation Docs](docs/Animation.md)

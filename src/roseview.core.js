@@ -337,7 +337,7 @@ const htmlControl = class {
 	 */
 	on(event, handler) {
 		this.element.addEventListener(event, handler);
-		this.eventListeners.push(["click", handler]);
+		this.eventListeners.push([event, handler]);
 		return this;
 	}
 
@@ -1446,11 +1446,11 @@ window.htmlPage = {
 		visibility: "hidden"
 	}),
 
-	set Animations(viewAnimations) {
+	set Transitions(viewAnimations) {
 		viewAnimations ? (this.viewAnimations = viewAnimations) : [];
 	},
 
-	get Animations() {
+	get Transitions() {
 		return this.viewAnimations;
 	},
 
@@ -1592,6 +1592,9 @@ window.htmlPage = {
 		document.body.style.width = "100%";
 	},
 
+	/**'
+	 * Load StyleSheet
+	 */
 	LoadStyle(dir) {
 		const link = document.createElement("link");
 		link.href = dir;
@@ -1600,6 +1603,9 @@ window.htmlPage = {
 		document.head.appendChild(link);
 	},
 
+	/**
+	 * Get System Theme
+	 */
 	get Theme() {
 		const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 		if (darkThemeMq.matches) {
@@ -1625,13 +1631,25 @@ window.htmlPage = {
 		}
 	},
 
-	get Landscape() {
-		lockOrientation("landscape");
-		return "landscape";
+	/**
+	 * Set the page orientation,
+	 * use landscape or portrait
+	 */
+	set Orient(val) {
+		if (val.toLowerCase() === "landscape") {
+			lockOrientation("landscape");
+			this.Orient = "landscape";
+		} else {
+			lockOrientation("portrait");
+			this.Orient = "portrait";
+		}
 	},
-	get Portrait() {
-		lockOrientation("portrait");
-		return "portrait";
+
+	/**
+	 * Get Page Orientation
+	 */
+	get Orient() {
+		return this.Orient;
 	},
 
 	/**
