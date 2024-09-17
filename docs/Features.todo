@@ -7,10 +7,13 @@
 
 |||| Add Objects / Methods
 
-* sys.HttpRequest
 * .scrollEffect ( use rellax scrolling library)
    under containers
 
+** Version 0.0.3.5
+
+* Fixed Hash Based Routing Animations, changed api
+  to layout.Transition
 
 ** Version 0.0.3.4
 
@@ -19,3 +22,4 @@
 -> no file based routing
 -> Also added animations (htmlPage.Animation = []), but its
    buggy.
+* Added sys.HttpRequest

@@ -82,9 +82,29 @@ For now roseview supports only hash based routing which is still buggy but a fix
 The first parameter of layouts is the hash route therefore they can be added in this manner :
 
 ```javascript
+// Main Testing Script For roseview Features
 
 let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
 main.setChildMargins = "null, 15px";
+
+let customIn = cssParser({
+ "@keyframes fadeIn": {
+  "0%": { opacity: "0" },
+  "100%": { opacity: "1" }
+ },
+ animation: "fadeIn 1s ease forwards"
+});
+
+let customOut = cssParser({
+ "@keyframes fadeOut": {
+  "0%": { opacity: "0" },
+  "100%": { opacity: "1" }
+ },
+ animation: "fadeIn 1s ease forwards"
+});
+
+main.Transition = [customIn, customOut];
+
 let nav_title = html.Text(main, "Main Page");
 nav_title.classes = "pacifico-regular";
 
@@ -93,16 +113,12 @@ loginBtn.on("click", () => {
  htmlPage.Open("#login");
 });
 
-let forwardBtn = html.Button(main, "Go Forward");
-forwardBtn.on("click", () => {
- htmlPage.Forward();
-});
-
 let login = html.CreateLayout("login", "linear", "center, scrolly, fillxy");
 login.setChildMargins = "null, 15px";
 login.style({
  backgroundColor: "yellow"
 });
+login.Transition = ["slideInLeft", "slideOutRight"];
 
 let input = html.Input(login, "text");
 
@@ -120,14 +136,23 @@ settings.setChildMargins = "null, 15px";
 settings.style({
  backgroundColor: "red"
 });
+settings.Transition = ["slideInTop", "slideOutBottom"];
 
 let inputB = html.Input(settings, "text");
 
-//htmlPage.Transitions = ["slideInUp", "slideOutDown"];
-htmlPage.LoadStyle("main.css");
-```
+let goBackB = html.Button(settings, "Go Back");
+goBackB.on("click", () => {
+ htmlPage.Back();
+});
 
-Additionaly you can add page transitions as you switch pages using the `htmlPage.Transitions` method.
+let goBackC = html.Button(settings, "Go Home");
+goBackC.on("click", () => {
+ htmlPage.Open("#index");
+});
+
+htmlPage.LoadStyle("main.css");
+
+```
 
 ### Styling Elements
 
@@ -185,7 +210,7 @@ style.color : 'red'
 These are getters set true to comply with function condition
 Gone make the elements hide and not visible while not taking space.
 
-#### On
+##### On
 
 This is an event listener method, use as
 
@@ -197,11 +222,11 @@ loginBtn.on("click", () => {
 });
 ```
 
-#### bindInput
+##### bindInput
 
 This method binds a signal (where input is) to where input is displayed at.
 
-#### addChild / destroyChild
+##### addChild / destroyChild
 
 If you want to add an element as a child of another use addChild, then to destroy the element use destroyChild.
 

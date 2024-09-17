@@ -24,26 +24,6 @@ btn.animate(type, callback, time);
  */
 ```
 
-### onTouch
-
-This method is the replacement of onClick event listener, it switches types of event listeners based on the device type, it is usable in the same way onClick would work.
-
-```javascript
-btn.onTouch = function(){
-    alert('Hellloooo')
-}
-```
-
-### onLongTouch
-
-This adds an onlong-touch event, usable as :
-
-```javascript
-btn.onLongTouch = function(){
-    alert('Hellloooo')
-}
-```
-
 ### show
 
 This method is used in a setter format, if the value is true the element is visible if false then the element is hidden but still taking up space in the DOM.
@@ -77,7 +57,7 @@ btn.style({
         boxShadow : '0px, 0px, 0px, 0px',
         top : '5px',
         left : '5px'
-    }
+    },
 
     "@media (max-width: 1250px)" : {
         /* */

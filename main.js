@@ -2,6 +2,25 @@
 
 let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
 main.setChildMargins = "null, 15px";
+
+let customIn = cssParser({
+	"@keyframes fadeIn": {
+		"0%": { opacity: "0" },
+		"100%": { opacity: "1" }
+	},
+	animation: "fadeIn 1s ease forwards"
+});
+
+let customOut = cssParser({
+	"@keyframes fadeOut": {
+		"0%": { opacity: "0" },
+		"100%": { opacity: "1" }
+	},
+	animation: "fadeIn 1s ease forwards"
+});
+
+main.Transition = [customIn, customOut];
+
 let nav_title = html.Text(main, "Main Page");
 nav_title.classes = "pacifico-regular";
 
@@ -10,16 +29,12 @@ loginBtn.on("click", () => {
 	htmlPage.Open("#login");
 });
 
-let forwardBtn = html.Button(main, "Go Forward");
-forwardBtn.on("click", () => {
-	htmlPage.Forward();
-});
-
 let login = html.CreateLayout("login", "linear", "center, scrolly, fillxy");
 login.setChildMargins = "null, 15px";
 login.style({
 	backgroundColor: "yellow"
 });
+login.Transition = ["slideInLeft", "slideOutRight"];
 
 let input = html.Input(login, "text");
 
@@ -37,6 +52,7 @@ settings.setChildMargins = "null, 15px";
 settings.style({
 	backgroundColor: "red"
 });
+settings.Transition = ["slideInTop", "slideOutBottom"];
 
 let inputB = html.Input(settings, "text");
 
@@ -49,5 +65,5 @@ let goBackC = html.Button(settings, "Go Home");
 goBackC.on("click", () => {
 	htmlPage.Open("#index");
 });
-//htmlPage.Animations = ["slideInUp", "slideOutDown"];
+
 htmlPage.LoadStyle("main.css");

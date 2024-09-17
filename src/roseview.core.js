@@ -5,9 +5,11 @@
 // MIT
 
 // @version
-// 0.0.3.4
+// 0.0.3.5
 
 "use strict";
+let pageTransitions = [];
+
 const html = {
 	/**
 	 * Creates a special div which has options allowing
@@ -1117,11 +1119,39 @@ const htmlDatalist = class extends htmlControl {
 const htmlContainer = class extends htmlControl {
 	constructor(route, type = "linear", options = "fillxy,vcenter") {
 		super();
+		this.route = route;
+
 		this.element = document.createElement("div");
 
 		htmlPage.Init();
 		type ? layoutFitApi(this.element, type, options) : null;
 		route ? htmlPage.Build(route, this) : Error("Null Route Provided On Layout");
+	}
+
+	// Transition method for page switching
+	set Transition(pageTransition) {
+		if (!this.route) {
+			return;
+		}
+
+		// Check if the transition given exists in the transition api
+		// If False, create a new one, If true register it then if null use fallback
+
+		if (!Boolean(transitionApi[pageTransition[0]])) {
+			const animationInClass = pageTransition[0] || transitionApi.fadeIn;
+			const animationOutClass = pageTransition[1] || transitionApi.fadeOut;
+			pageTransitions[`#${this.route}`] = {
+				animationInClass,
+				animationOutClass
+			};
+		} else {
+			const animationInClass = transitionApi[pageTransition[0]] || transitionApi.fadeIn;
+			const animationOutClass = transitionApi[pageTransition[1]] || transitionApi.fadeOut;
+			pageTransitions[`#${this.route}`] = {
+				animationInClass,
+				animationOutClass
+			};
+		}
 	}
 };
 
@@ -1435,10 +1465,59 @@ const cssParser = (styles) => {
 	return className;
 };
 
+const transitionApi = {
+	fadeIn: cssParser({
+		"@keyframes fadeIn": {
+			"0%": { opacity: "0" },
+			"100%": { opacity: "1" }
+		},
+		animation: "fadeIn 1s ease forwards"
+	}),
+
+	fadeOut: cssParser({
+		"@keyframes fadeOut": {
+			"0%": { opacity: "1" },
+			"100%": { opacity: "0" }
+		},
+		animation: "fadeOut 1s ease forwards"
+	}),
+
+	slideInLeft: cssParser({
+		"@keyframes slideInLeft": {
+			"0%": { transform: "translateX(-100%)" },
+			"100%": { transform: "translateX(0)" }
+		},
+		animation: "slideInLeft 1s ease forwards"
+	}),
+
+	slideOutRight: cssParser({
+		"@keyframes slideOutRight": {
+			"0%": { transform: "translateX(0)" },
+			"100%": { transform: "translateX(100%)" }
+		},
+		animation: "slideOutRight 1s ease forwards"
+	}),
+
+	slideInTop: cssParser({
+		"@keyframes slideInTop": {
+			"0%": { transform: "translateY(-100%)" },
+			"100%": { transform: "translateY(0)" }
+		},
+		animation: "slideInTop 1s ease forwards"
+	}),
+
+	slideOutBottom: cssParser({
+		"@keyframes slideOutBottom": {
+			"0%": { transform: "translateY(0)" },
+			"100%": { transform: "translateY(100%)" }
+		},
+		animation: "slideOutBottom 1s ease forwards"
+	})
+};
+
 const htmlPage = {
 	routeMap: new Map(),
 	history: [],
-	pageTransitions: [],
 	suppressHashChange: false,
 	originalUrl: window.location.pathname,
 
@@ -1446,14 +1525,6 @@ const htmlPage = {
 		display: "none !important",
 		visibility: "hidden !important"
 	}),
-
-	set Transitions(pageTransitions) {
-		pageTransitions ? (this.pageTransitions = pageTransitions) : [];
-	},
-
-	get Transitions() {
-		return this.pageTransitions;
-	},
 
 	Build(route, container) {
 		// Listen for hashchange events to handle browser navigation
@@ -1504,45 +1575,65 @@ const htmlPage = {
 		}
 	},
 
-	Open(route, pageTransitions) {
+	Open(route, pageTransition) {
 		if (!this.routeMap.get(route)) {
 			return false;
 		}
-		pageTransitions ? (this.pageTransitions = pageTransitions) : false;
 
 		let path = window.location.hash;
 		if (path === "" || path === "/") path = "#index";
 
+		// Adjusting route to index if needed
 		if (route === " " || route === "/") {
 			route = "#index";
-			console.log(route === path);
 		}
 
+		// Prevent animation when navigating to the index route
+
+		// Adjust the path if it's the same as the route
 		if (path === route) {
 			path = this.history.slice(-1)[0];
-			console.log(`Adjusted Path : ${route}`);
 		}
 
-		console.log(`Current Path : ${path}, Opening : ${route}`);
 		let route_to_show = document.getElementById(this.routeMap.get(route));
-
 		let route_to_hide = document.getElementById(this.routeMap.get(path));
 
-		if (pageTransitions === true || this.pageTransitions === true) {
-			let [animationIn] = pageTransitions || this.pageTransitions;
+		// Get the animations for the current route
+		const { animationInClass, animationOutClass } = pageTransitions[route] || {};
 
-			route_to_show.classList.remove(this.hiddenContainer);
-			route_to_show.classList.add("animate__animated", `animate__${animationIn}`);
-
-			// Listen for the animation end on the last route container
-			route_to_show.addEventListener("animationend", function handleAnimationEnd() {
+		// Hide the current route with the out animation
+		if (pageTransitions[route]) {
+			// Skip Animations If Its To Home Navigation
+			if (route === "#index") {
+				this.history.push(route);
+				window.location.hash = route;
+				route_to_show.classList.remove(this.hiddenContainer);
 				route_to_hide.classList.add(this.hiddenContainer);
-			});
+			} else {
+				// Listen for the animation end event to hide the element
+				route_to_hide.addEventListener(
+					"animationend",
+					() => {
+						// Ensure that the element is properly hidden
+						// Clean up the animation class
+						route_to_hide.classList.remove(animationOutClass);
+					},
+					{ once: true }
+				);
+				route_to_hide.classList.add(animationOutClass);
+				route_to_hide.classList.add(this.hiddenContainer);
+			}
 		} else {
-			// If no animation, simply hide the last container and show the new one
-			route_to_hide.classList.add(this.hiddenContainer);
-
+			// No animation out, hide immediately
 			route_to_show.classList.remove(this.hiddenContainer);
+			route_to_hide.classList.add(this.hiddenContainer);
+		}
+
+		// Show the new route with the in animation
+
+		if (animationInClass) {
+			route_to_show.classList.remove(this.hiddenContainer);
+			route_to_show.classList.add(animationInClass);
 		}
 
 		this.history.push(route);
@@ -1554,7 +1645,6 @@ const htmlPage = {
 			this.suppressHashChange = false;
 		}, 100);
 	},
-
 	backCounter: 2,
 
 	handleHashChange() {
@@ -1562,20 +1652,18 @@ const htmlPage = {
 		if (this.suppressHashChange) {
 			return false;
 		}
-		const path = window.location.hash;
+		let path = window.location.hash;
 
 		// Sync history when hash changes via browser navigation
 		if (!this.history.includes(path)) {
 			this.history.push(path); // Update the custom history
 		}
 		if (path === "/" || path === "") path = "#index";
-		console.log(`handleHashFN : ${path}`);
 		htmlPage.Open(path);
 	},
 
 	Back(pageTransitions) {
 		let lastRoute = this.history.slice(-this.backCounter)[0];
-		alert(lastRoute);
 
 		// Find the index of lastRoute in the history array
 		let index = this.history.indexOf(lastRoute);
@@ -1585,7 +1673,6 @@ const htmlPage = {
 			this.history.splice(index, 1);
 		}
 
-		console.log(lastRoute, "lastRoute");
 		htmlPage.Open(lastRoute, pageTransitions);
 
 		// Increment the backCounter after each call
