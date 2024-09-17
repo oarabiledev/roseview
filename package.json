@@ -1,8 +1,8 @@
 {
 	"name": "roseview",
-	"version": "0.0.3",
+	"version": "0.0.3.5",
 	"description": "optimized ui framework for writing front-end's declarativley.",
-	"main": "roseview.es.js",
+	"main": "roseview.core.js",
 	"keywords": [
 		"ui"
 	],
