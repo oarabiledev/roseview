@@ -25,7 +25,7 @@ For the easy way out just add this script tag to your `index.html` file :
 /**Dont Forget To Add Your Main Script File */
 ````
 
-You can also install roseview in node by : `node install roseview`,
+You can also install roseview in node by : `npm install roseview`,
 
 After that the next step is to use the cli tool to create a new project.
 
