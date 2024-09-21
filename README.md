@@ -13,7 +13,7 @@ roseview aims to be simple and easy to master.
 
 ## Installation
 
-There is no installation, just add this script tag to your `index.html` file :
+For the easy way out just add this script tag to your `index.html` file :
 
 ```html
 <script src="roseview.core.js"></script>
@@ -24,6 +24,18 @@ There is no installation, just add this script tag to your `index.html` file :
 
 /**Dont Forget To Add Your Main Script File */
 ````
+
+You can also install roseview in node by : `node install roseview`,
+
+After that the next step is to use the cli tool to create a new project.
+
+`create-rose-app appName`
+
+In your projects dont forget to import : )
+
+```javascript
+import { html, htmlPage, cssParser, createSignal, showIF } from 'roseview'
+```
 
 ## Getting Started
 

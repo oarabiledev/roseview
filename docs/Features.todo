@@ -10,6 +10,12 @@
 * .scrollEffect ( use rellax scrolling library)
    under containers
 
+** Version 0.1.6
+
+* Changed To Semantiv Versioning
+* Skipped Version, Due To Npm Publish Error
+* Added Cli Build Tool ( create-rose-app )
+
 ** Version 0.0.3.5
 
 * Fixed Hash Based Routing Animations, changed api

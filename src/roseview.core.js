@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.0.3.5
+// 0.1.6
 
 "use strict";
 let pageTransitions = [];
@@ -248,6 +248,13 @@ const htmlControl = class {
 		return this;
 	}
 
+	/**
+	 * Set the aligmnet of child elements on your control
+	 * @param {string} options
+	 */
+	set alignment(options) {
+		options ? optionsApi(this.element, options) : console.log("Alignment Options Undefined");
+	}
 	bindInput(signal) {
 		const [getValue, setValue, subscribe] = signal;
 
@@ -811,45 +818,51 @@ htmlControl.prototype._onAnimationEnd = function () {
 	}
 };
 
-// Add sys objects for roseview
+// Define Additional html Methods
 
-const sys = {
-	HttpRequest: async (url, options = {}, retries = 3, timeout = 5000) => {
-		const timeout_function = function (ms) {
-			new Promise((_, reject) => {
-				setTimeout(() => {
-					reject(new Error(`Request Has Timed Out`));
-				}, ms);
-			});
-		};
+/**
+ * Creates an html request that extends on fetch by adding retries and timeout
+ * @param {string} url
+ * @param {object} options
+ * @param {interger} retries
+ * @param {number} timeout
+ * @returns
+ */
+html.HttpRequest = async (url, options = {}, retries = 3, timeout = 5000) => {
+	const timeout_function = function (ms) {
+		new Promise((_, reject) => {
+			setTimeout(() => {
+				reject(new Error(`Request Has Timed Out`));
+			}, ms);
+		});
+	};
 
-		// perform the fetch operation with retry logic
-		const fetch_with_retry = async (url, options, retries) => {
-			for (let attempt = 1; attempt <= retries; attempt++) {
-				try {
-					const response = await Promise.race([fetch(url, options), timeout_function(timeout)]);
+	// perform the fetch operation with retry logic
+	const fetch_with_retry = async (url, options, retries) => {
+		for (let attempt = 1; attempt <= retries; attempt++) {
+			try {
+				const response = await Promise.race([fetch(url, options), timeout_function(timeout)]);
 
-					if (!response.ok) {
-						throw new Error(`HTTP error! status: ${response.status}`);
-					}
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
-					return response;
-				} catch (error) {
-					if (attempt === retries) {
-						throw error;
-					}
+				return response;
+			} catch (error) {
+				if (attempt === retries) {
+					throw error;
 				}
 			}
-		};
-
-		try {
-			const response = await fetch_with_retry(url, options, retries);
-			const data = await response.json();
-			return data;
-		} catch (error) {
-			console.error("Fetch failed:", error);
-			throw error;
 		}
+	};
+
+	try {
+		const response = await fetch_with_retry(url, options, retries);
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Fetch failed:", error);
+		throw error;
 	}
 };
 
@@ -1530,7 +1543,6 @@ const htmlPage = {
 		// Listen for hashchange events to handle browser navigation
 		window.onhashchange = this.handleHashChange.bind(this);
 		if (window.location.hash !== "#index") {
-			console.log("OnOpen Hash", window.location.hash);
 			this.handleHashChange(window.location.hash);
 		}
 
