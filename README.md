@@ -13,19 +13,9 @@ roseview aims to be simple and easy to master.
 
 ## Installation
 
-For the easy way out just add this script tag to your `index.html` file :
+You can also install roseview in node by :
 
-```html
-<script src="roseview.core.js"></script>
-/** Or */
-<script src="roseview.es.js" type="module"></script>
-/** Or */
-<script src="https://www.unpkg.com/roseview" type="module"></script>
-
-/**Dont Forget To Add Your Main Script File */
-````
-
-You can also install roseview in node by : `npm install roseview`,
+`npm install roseview`,
 
 After that the next step is to use the cli tool to create a new project.
 
@@ -34,7 +24,7 @@ After that the next step is to use the cli tool to create a new project.
 In your projects dont forget to import : )
 
 ```javascript
-import { html, htmlPage, cssParser, createSignal, showIF } from 'roseview'
+import { html, cssParser } from 'roseview/core'
 ```
 
 ## Getting Started
@@ -46,15 +36,13 @@ Even though typescript was not used, i have tried to add jsdoc on the relevant p
 A layout is a special div that takes in parameters like the hash route, type of layout, alignment options.
 
 ```javascript
-let main = html.CreateLayout(route, type, alignmentOptions);
-
-// If page is main, write in this manner 
+let main = html.CreateLayout(type, alignmentOptions);
 
 
-let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
+let main = html.CreateLayout("linear", "center, scrolly, fillxy");
 ````
 
-The option "FillXY", is useful for fullscreen layouts, layouts can be created to form a toast, banner, bottomsheet but must have their route as *null*.
+The option "FillXY", is useful for fullscreen layouts, layouts can be created to form a toast, banner, bottomsheet.
 
 #### Types Of Layouts & Alignment Options
 
@@ -96,74 +84,36 @@ The first parameter of layouts is the hash route therefore they can be added in 
 ```javascript
 // Main Testing Script For roseview Features
 
-let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
-main.setChildMargins = "null, 15px";
+import { HashRouter } from "roseview/router";
+import { createApp } from "roseview/core";
 
-let customIn = cssParser({
- "@keyframes fadeIn": {
-  "0%": { opacity: "0" },
-  "100%": { opacity: "1" }
- },
- animation: "fadeIn 1s ease forwards"
+import main from "./pages/main.js";
+import about from "./pages/about.js";
+
+const routes = [
+    { path: "/", component: main },
+    { path: "/about", component: about },
+];
+const router = HashRouter(routes);
+
+window.app = createApp(main).use(router).mount("#app");
+
+```
+
+In your main.js page you would have something like this :
+
+```javascript
+import { html } from "roseview/core";
+
+let main = html.CreateLayout("linear", "center, scrolly, fillxy");
+
+let btn = html.Button(main, "Go To About 😋");
+
+btn.on("click", function () {
+    app.router.navigate("/about");
 });
 
-let customOut = cssParser({
- "@keyframes fadeOut": {
-  "0%": { opacity: "0" },
-  "100%": { opacity: "1" }
- },
- animation: "fadeIn 1s ease forwards"
-});
-
-main.Transition = [customIn, customOut];
-
-let nav_title = html.Text(main, "Main Page");
-nav_title.classes = "pacifico-regular";
-
-let loginBtn = html.Button(main, "Open Login Page");
-loginBtn.on("click", () => {
- htmlPage.Open("#login");
-});
-
-let login = html.CreateLayout("login", "linear", "center, scrolly, fillxy");
-login.setChildMargins = "null, 15px";
-login.style({
- backgroundColor: "yellow"
-});
-login.Transition = ["slideInLeft", "slideOutRight"];
-
-let input = html.Input(login, "text");
-
-let goSet = html.Button(login, "Settings");
-goSet.on("click", () => {
- htmlPage.Open("#settings");
-});
-let goBack = html.Button(login, "Go Back");
-goBack.on("click", () => {
- htmlPage.Back();
-});
-
-let settings = html.CreateLayout("settings", "linear", "center, scrolly, fillxy");
-settings.setChildMargins = "null, 15px";
-settings.style({
- backgroundColor: "red"
-});
-settings.Transition = ["slideInTop", "slideOutBottom"];
-
-let inputB = html.Input(settings, "text");
-
-let goBackB = html.Button(settings, "Go Back");
-goBackB.on("click", () => {
- htmlPage.Back();
-});
-
-let goBackC = html.Button(settings, "Go Home");
-goBackC.on("click", () => {
- htmlPage.Open("#index");
-});
-
-htmlPage.LoadStyle("main.css");
-
+export default main;
 ```
 
 ### Styling Elements
@@ -202,7 +152,7 @@ btn.removeClasses = 'class1'
 There is the `setMargins / setChildMargins / setPosition` getters which allow you to change spacing without editing css directly.
 
 ```javascript
-let main = html.CreateLayout("index", "linear", "center, scrolly, fillxy");
+let main = html.CreateLayout("linear", "center, scrolly, fillxy");
 main.setChildMargins = "null, 15px";
 ````
 
@@ -297,14 +247,9 @@ btn.element.textContent = 'DOM Access'
 This object allows you to tweak thing like the title, set icons, the most poweful are moving pages.
 
 ```javascript
-
-htmlPage.Open(route, transitions)
-htmlPage.Back()
-htmlPage.Forward()
 htmlPage.LoadStyle()
 htmlPage.LoadScript()
 htmlPage.Theme
-htmlPage.Lang
 htmlPage.Orient
 ```
 
