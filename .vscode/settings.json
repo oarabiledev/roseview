@@ -1,0 +1,4 @@
+{
+    "typescript.implicitProjectConfig.checkJs": true,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true
+}

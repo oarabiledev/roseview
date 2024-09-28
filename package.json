@@ -1,25 +1,32 @@
 {
-	"name": "roseview",
-	"version": "0.1.6",
-	"description": "high perfomance UI framework for writing front-end declaratively.",
-	"main": "dist/roseview.esm.js",
-	"exports": {
-	  ".": {
-		"import": "./dist/roseview.esm.js" 
-	  }
-	},
-	"keywords": [
-	  "ui",
-	  "framework"
-	],
-	"author": "Oarabile Koore",
-	"license": "MIT",
-	"scripts": {
-	  "build": "vite build",
-	  "dev": "vite"
-	},
-	"dependencies": {
-	  "vite": "^5.4.6"
-	}
-  }
-  
+    "name": "roseview",
+    "version": "0.1.7",
+    "description": "High performance UI framework for writing front-end declaratively.",
+    "exports": {
+        ".": {
+            "import": "./dist/core.js"
+        },
+        "./core": {
+            "import": "./dist/core.js"
+        },
+        "./state": {
+            "import": "./dist/state.js"
+        },
+        "./router": {
+            "import": "./dist/router.js"
+        }
+    },
+    "keywords": [
+        "ui",
+        "framework"
+    ],
+    "author": "Oarabile Koore",
+    "license": "MIT",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "dependencies": {
+        "vite": "^5.4.6"
+    }
+}
