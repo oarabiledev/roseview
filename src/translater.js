@@ -23,12 +23,11 @@ export const Translater = function (translationParam) {
             app.translate = this;
         },
 
-        lang: function (id) {
-            currentLang = id;
+        lang: function (languageCode) {
             const elements = document.querySelectorAll("[data-translate-id]");
             for (let element of elements) {
                 const id = element.getAttribute("data-translate-id");
-                this.text(id, lang)
+                this.text(id, languageCode)
                     .then((translation) => {
                         element.textContent = translation;
                     })

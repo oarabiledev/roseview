@@ -15,7 +15,10 @@ export const HashRouter = function (hashParam) {
         currentRoute: null,
 
         _init: function () {
-            window.location.hash = `#index`;
+            if (!window.location.hash) {
+                window.location.hash = `#index`;
+            } else this._handleHashChange();
+
             window.onhashchange = this._handleHashChange.bind(this);
             return this;
         },
@@ -29,12 +32,22 @@ export const HashRouter = function (hashParam) {
             const container = document.querySelector("#app");
             if (container) {
                 container.innerHTML = "";
-                container.appendChild(this.currentRoute.component.element);
+                if (this.currentRoute && this.currentRoute.component) {
+                    container.appendChild(this.currentRoute.component.element);
+                } else console.error("No valid component found for route");
             }
             return this;
         },
 
-        _handleHashChange: function () {},
+        _handleHashChange: function () {
+            const hash = window.location.hash.slice(1) || "/";
+            const route = this.routes.find((r) => r.path === hash);
+
+            if (route) {
+                this.currentRoute = route;
+                this._render();
+            } else console.error(`Route not found: ${hash}`);
+        },
 
         navigate: function (path) {
             const route = this.routes.find((r) => r.path === path);
@@ -42,12 +55,18 @@ export const HashRouter = function (hashParam) {
                 this.currentRoute = route;
                 window.location.hash = path;
                 this._render();
-            } else {
-                console.error(`route not found: ${path}`);
-            }
+            } else console.error(`Route not found: ${path}`);
+
             return this;
         },
+
+        back: function () {
+            history.back();
+        },
+
+        forward: function () {
+            history.forward();
+        },
     };
-    plugin._init();
     return plugin;
 };
