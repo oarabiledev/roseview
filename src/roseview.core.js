@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.1.7
+// 0.1.8
 
 "use strict";
 let pageTransitions = [];
