@@ -1,6 +1,6 @@
 {
     "name": "roseview",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "High performance UI framework for writing front-end declaratively.",
     "exports": {
         ".": {
