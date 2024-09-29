@@ -15,7 +15,8 @@ export default defineConfig({
       input: {
         core: path.resolve(__dirname, './src/roseview.core.js'),
         state: path.resolve(__dirname, './src/state.js'),
-        router: path.resolve(__dirname, './src/router.js')
+        router: path.resolve(__dirname, './src/router.js'),
+        translater: path.resolve(__dirname, './src/translater.js')
       },
       output: {
         entryFileNames: '[name].js', 

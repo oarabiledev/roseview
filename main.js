@@ -1,14 +1,16 @@
 // Main Testing Script For roseview Features
 
-import { HashRouter } from "roseview/router";
-import { createApp } from "roseview/core";
+import { HashRouter } from "./src/router.js";
+import { createApp } from "./src/roseview.core.js";
 
 import main from "./pages/main.js";
 import about from "./pages/about.js";
+import partners from "./pages/partners.js";
 
 const routes = [
-    { path: "/", component: main },
-    { path: "/about", component: about },
+    { path: "index", component: main },
+    { path: "about", component: about },
+    { path: "about/partners", component: partners },
 ];
 const router = HashRouter(routes);
 

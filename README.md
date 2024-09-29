@@ -91,8 +91,8 @@ import main from "./pages/main.js";
 import about from "./pages/about.js";
 
 const routes = [
-    { path: "/", component: main },
-    { path: "/about", component: about },
+    { path: "index", component: main },
+    { path: "about", component: about },
 ];
 const router = HashRouter(routes);
 
@@ -110,7 +110,7 @@ let main = html.CreateLayout("linear", "center, scrolly, fillxy");
 let btn = html.Button(main, "Go To About 😋");
 
 btn.on("click", function () {
-    app.router.navigate("/about");
+    app.router.navigate("about");
 });
 
 export default main;
@@ -132,7 +132,7 @@ txt.style({
    }
 
    "*" : {
-    color: "red
+    color: "red"
    }
 })
 ```
@@ -180,7 +180,7 @@ This is an event listener method, use as
 let loginBtn = html.Button(main, "Open Login Page");
 
 loginBtn.on("click", () => {
- htmlPage.Open("login");
+ alert('Logged In')
 });
 ```
 
