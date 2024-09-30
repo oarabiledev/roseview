@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.1.7
+// 0.1.8
 
 // state Module
 
@@ -47,6 +47,41 @@ const createSignal = function (defaultValue = null) {
     return [getValue, setValue, setSubscriberFunc];
 };
 
+const createReactiveSignal = (obj) => {
+    let subscriptions = [];
+
+    const notify = () => {
+        subscriptions.forEach((subscriber) => subscriber(obj));
+    };
+
+    const proxyHandler = {
+        set(target, key, value) {
+            target[key] = value;
+            notify();
+            return true;
+        },
+        get(target, key) {
+            if (typeof target[key] === "object" && target[key] !== null) {
+                return new Proxy(target[key], proxyHandler);
+            } else {
+                return target[key];
+            }
+        },
+    };
+
+    const proxy = new Proxy(obj, proxyHandler);
+
+    const subscribe = (callback) => {
+        if (typeof callback === "function") {
+            subscriptions.push(callback);
+        } else {
+            console.error("Subscription must be a function");
+        }
+    };
+
+    return [proxy, subscribe];
+};
+
 const showIF = (restingVal, child, fallback) => {
     if (typeof restingVal === "boolean") {
         if (restingVal) {
@@ -61,4 +96,4 @@ const showIF = (restingVal, child, fallback) => {
     }
 };
 
-export { createSignal, showIF };
+export { createSignal, createReactiveSignal, showIF };
