@@ -1,28 +1,26 @@
-import { defineConfig } from 'vite';
-import path from 'path';
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  build: {
-    minify: false,
-    lib: {
-      entry: './src/roseview.core.js',
-      name: 'roseview',
-      formats: ['es'],
-      fileName: (format) => `core.${format}.js`
-    },
+    build: {
+        minify: true,
+        sourcemap: true,
+        lib: {
+            entry: "./index.js",
+            name: "roseview",
+            fileName: (format) => `roseview.${format}.js`,
+            formats: ["es", "cjs", "umd"],
+        },
 
-    rollupOptions: {
-      input: {
-        core: path.resolve(__dirname, './src/roseview.core.js'),
-        state: path.resolve(__dirname, './src/state.js'),
-        router: path.resolve(__dirname, './src/router.js'),
-        translater: path.resolve(__dirname, './src/translater.js')
-      },
-      output: {
-        entryFileNames: '[name].js', 
-        format: 'es',
-        dir: path.resolve(__dirname, 'dist')
-      },
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+        output: {
+            beautify: false,
+            comments: "some",
+            preserve_annotations: true,
+            semicolons: true,
+        },
     },
-  },
 });

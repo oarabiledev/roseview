@@ -1,35 +1,36 @@
 {
     "name": "roseview",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "High performance UI framework for writing front-end declaratively.",
+    "main": "dist/roseview.cjs.js",
+    "module": "dist/roseview.es.js",
+    "types": "dist/index.d.ts",
     "exports": {
         ".": {
-            "import": "./dist/core.js"
+            "import": "./dist/roseview.es.js",
+            "require": "./dist/roseview.cjs.js"
         },
-        "./core": {
-            "import": "./dist/core.js"
-        },
-        "./state": {
-            "import": "./dist/state.js"
-        },
-        "./router": {
-            "import": "./dist/router.js"
-        },
-        "./translater": {
-            "import": "./dist/translater.js"
-        }
+        "./umd": "./dist/roseview.umd.js"
     },
+    "files": [
+        "dist",
+        "src",
+        "index.js"
+    ],
     "keywords": [
         "ui",
         "framework"
     ],
-    "author": "Oarabile Koore",
-    "license": "MIT",
     "scripts": {
         "build": "vite build",
         "dev": "vite"
     },
     "dependencies": {
         "vite": "^5.4.6"
+    },
+    "author": "Oarabile Koore",
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "^5.6.2"
     }
 }

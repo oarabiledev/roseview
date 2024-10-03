@@ -1,7 +1,7 @@
 // Main Testing Script For roseview Features
 
-import { HashRouter } from "./src/router.js";
-import { createApp } from "./src/roseview.core.js";
+import { HashRouter } from "roseview";
+import { createApp } from "roseview";
 
 import main from "./pages/main.js";
 import about from "./pages/about.js";

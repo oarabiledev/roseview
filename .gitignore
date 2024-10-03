@@ -19,3 +19,13 @@ dist/
 
 # Windows system files
 Thumbs.db
+
+# preety
+
+.prettierignore
+
+.vscode/
+
+# Ignore Self
+
+.gitignore

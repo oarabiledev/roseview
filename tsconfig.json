@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "esnext", // Target JavaScript version
+        "module": "esnext", // Module system
+        "declaration": true, // Generate .d.ts files
+        "outDir": "./dist", // Output directory for compiled files
+        "allowJs": true, // Allow compilation of JavaScript files
+        "checkJs": true, // Enable type checking on .js files
+        "strict": true // Enable strict type-checking options
+    },
+    "include": [
+        "src/**/*.js", // Include your source files
+        "index.js" // Include your entry point file
+    ],
+    "exclude": [
+        "node_modules", // Exclude node_modules
+        "dist" // Exclude dist to avoid conflicts
+    ]
+}

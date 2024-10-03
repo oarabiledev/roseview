@@ -1,4 +1,4 @@
-import { html } from "../src/roseview.core.js";
+import { html } from "roseview";
 
 let main = html.CreateLayout("linear", "center, scrolly, fillxy");
 

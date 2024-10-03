@@ -1,5 +1,5 @@
 {
     "name": "@roseframework/roseview",
-    "version": "0.1.7",
-    "exports": "./mod.ts"
+    "version": "0.1.9",
+    "exports": "./index.js"
 }

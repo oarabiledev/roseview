@@ -82,13 +82,23 @@ const createReactiveSignal = (obj) => {
     return [proxy, subscribe];
 };
 
+/**
+ * When The condition is true an element is shown
+ * @param {boolean} restingVal
+ * @param {Function} child
+ * @param {Function} fallback
+ */
 const showIF = (restingVal, child, fallback) => {
     if (typeof restingVal === "boolean") {
         if (restingVal) {
+            // @ts-expect-error
             child.show = true;
+            // @ts-expect-error
             fallback.gone = true;
         } else {
+            // @ts-expect-error
             child.gone = true;
+            // @ts-expect-error
             fallback.show = true;
         }
     } else {

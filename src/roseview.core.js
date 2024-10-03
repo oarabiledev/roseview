@@ -5,24 +5,27 @@
 // MIT
 
 // @version
-// 0.1.8
+// 0.1.9
 
 "use strict";
-let pageTransitions = [];
 
 const html = {
     /**
      * Creates a special div which has options allowing
      * you to define the position of its children.
      * @param {string} type - The type of container (e.g., 'div', 'section').
-     * @param {object} options - Options to define the container's properties (e.g., style, class).
-     * @param {object} parent - The parent element to which the container will be appended.
+     * @param {string} options - Options to define the container's properties (e.g., style, class).
      * @returns {htmlContainer} - A new htmlContainer instance.
      */
-    CreateLayout: (type, options, parent) => {
-        return new htmlContainer(type, options, parent);
+    CreateLayout: (type, options) => {
+        return new htmlContainer(type, options);
     },
 
+    /***
+     * Add an HTMLElement
+     * @param {object} parent
+     * @param {HTMLElement} tag
+     */
     Element: (parent, tag) => {
         return new htmlCreateElement(parent, tag);
     },
@@ -44,6 +47,7 @@ const html = {
      * @returns {htmlImage} - A new htmlImage instance.
      */
     Image: (parent, sources) => {
+        // @ts-ignore
         return new htmlImage(parent, sources);
     },
 
@@ -181,7 +185,7 @@ const html = {
     /**
      * Creates a video element.
      * @param {object} parent - The parent element to which the video will be appended.
-     * @param {string|string[]} [sources=[]] - The source(s) of the video file(s).
+     * @param {Array<String>} sources - The source(s) of the video file(s).
      * @returns {htmlVideo} - A new htmlVideo instance.
      */
     Video: (parent, sources = []) => {
@@ -191,7 +195,7 @@ const html = {
     /**
      * Creates an audio element.
      * @param {object} parent - The parent element to which the audio will be appended.
-     * @param {string|string[]} [sources=[]] - The source(s) of the audio file(s).
+     * @param {Array<String>} sources - The source(s) of the audio file(s).
      * @returns {htmlAudio} - A new htmlAudio instance.
      */
     Audio: (parent, sources = []) => {
@@ -231,9 +235,20 @@ const html = {
 
 const htmlControl = class {
     constructor() {
-        this.element = null;
+        /**
+         * @type {HTMLElement}
+         */
+        this.element;
         this.elementUid = null;
+
+        /**
+         * @type {Array<EventListener>}
+         */
         this.eventListeners = [];
+
+        /**
+         * @type {Array<string>}
+         */
         this.elementClasses = [];
     }
 
@@ -257,43 +272,27 @@ const htmlControl = class {
             ? optionsApi(this.element, options)
             : console.log("Alignment Options Undefined");
     }
-    bindInput(signal) {
-        const [getValue, setValue, subscribe] = signal;
-
-        // Set the initial value of the input field from the signal
-        this.element.value = getValue();
-
-        this.element.addEventListener("input", (e) => {
-            setValue(e.target.value);
-        });
-
-        subscribe((newValue) => {
-            this.element.value = newValue;
-        });
-
-        return this;
-    }
 
     /**
      * Add multiple classes
+     * @param {string} classes
      */
     set classes(classes) {
         classes.split(" ").map((v) => {
             this.element.classList.add(v);
             this.elementClasses.push(v);
         });
-        return this;
     }
 
     /**
      * Remove Classes
+     * @param {string} classes
      */
     set removeClasses(classes) {
         classes.split(" ").map((v) => {
             this.element.classList.remove(v);
             this.elementClasses.indexOf(v);
         });
-        return this;
     }
 
     /**
@@ -304,6 +303,7 @@ const htmlControl = class {
     batchProps(props) {
         Object.entries(props).forEach(([key, value]) => {
             requestAnimationFrame(() => {
+                // @ts-ignore
                 this.element[key] = value;
             });
         });
@@ -312,7 +312,7 @@ const htmlControl = class {
 
     /**
      * Add a child to that element
-     * @param {InstanceType<htmlControl>} child
+     * @param {Function} child
      */
     addChild(child) {
         if (child instanceof htmlControl) {
@@ -325,11 +325,12 @@ const htmlControl = class {
 
     /**
      * Remove The Child
-     * @param {Object<htmlComponent>} child
+     * @param {object} child
      */
     destroyChild(child) {
-        if (child instanceof htmlComponent) {
+        if (child instanceof htmlControl) {
             child.eventListeners.forEach((el) => {
+                // @ts-ignore
                 let [event, Fn] = el;
                 child.element.removeEventListener(event, Fn);
             });
@@ -347,13 +348,16 @@ const htmlControl = class {
      * @param {Function} handler
      */
     on(event, handler) {
+        // @ts-ignore
         this.element.addEventListener(event, handler);
+        // @ts-ignore
         this.eventListeners.push([event, handler]);
         return this;
     }
 
     /**
      * Setter method to switch element visibility
+     * @param {boolean} bool
      */
     set show(bool) {
         if (bool) {
@@ -365,12 +369,12 @@ const htmlControl = class {
                 visibility: "hidden",
             });
         }
-        return this;
     }
 
     /**
      * Setter method, allows switching element visibility
      * in a way that the element does not take space
+     * @param {boolean} bool
      */
     set gone(bool) {
         if (bool) {
@@ -384,25 +388,12 @@ const htmlControl = class {
                 visibility: "visible",
             });
         }
-        return this;
     }
 
     /**
-     * Switch on element visibility
+     * Set The Margins Of Child Elements
+     * @param {string} params
      */
-    set focus(bool) {}
-
-    /**
-     *
-     * @param {*} type
-     * @param {*} callback
-     * @param {*} time
-     */
-    animate(type, callback, time = 1000) {
-        if (type === true && time === true) {
-        }
-    }
-
     set setChildMargins(params) {
         let [left, top, right, bottom] = params.split(",").map((val) => {
             return val.trim();
@@ -416,9 +407,12 @@ const htmlControl = class {
                 marginBottom: bottom,
             },
         });
-        return this;
     }
 
+    /**
+     * Set The Margins Of The Element
+     * @param {string} params
+     */
     set setMargins(params) {
         let [left, top, right, bottom] = params.split(",").map((val) => {
             return val.trim();
@@ -432,6 +426,10 @@ const htmlControl = class {
         });
     }
 
+    /**
+     * Set The Pading Of The Element
+     * @param {string} params
+     */
     set setPadding(params) {
         let [left, top, right, bottom] = params.split(",").map((val) => {
             return val.trim();
@@ -445,6 +443,11 @@ const htmlControl = class {
         });
     }
 
+    /**
+     * Set The Position Of The Element
+     * @param {string} params
+     */
+
     set setPosition(params) {
         let [leftv, topv, rightv, bottomv] = params.split(",").map((val) => {
             return val.trim();
@@ -457,475 +460,16 @@ const htmlControl = class {
             top: topv,
             bottom: bottomv,
         });
-        return this;
-    }
-};
-
-// Extend htmlControl Class & Define Animation Sequence Methods
-
-htmlControl.prototype.animationSequence = function () {
-    this._onStart = null;
-    this._onCompleted = null;
-    this._isAnimating = false;
-    this._animationQueue = [];
-    this._currentAnimation = null;
-    this._computedAnimation = null;
-    return this;
-};
-
-/**
- * Set the opacity of the element.
- * @param {number} alpha - The opacity value (0 to 1).
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.alpha = function (alpha, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.opacity = alpha;
-                this.element.style.transition = `opacity ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Ends the current animation.
- */
-htmlControl.prototype.end = function () {
-    this._isAnimating = false;
-    this.element.style.transition = "";
-    this._animationQueue = [];
-    this._currentAnimation = null;
-};
-
-/**
- * Checks if the animation is currently running.
- * @returns {boolean} - Returns true if the animation is running, otherwise false.
- */
-htmlControl.prototype.isAnimSequenceRunning = function () {
-    return this._isAnimating;
-};
-
-/**
- * Moves the element to a new position.
- * @param {number} left - The new left position.
- * @param {number} top - The new top position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.position = function (left, top, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translate(${left}px, ${top}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Moves the element horizontally.
- * @param {number} left - The new left position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.positionX = function (left, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translateX(${left}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Moves the element vertically.
- * @param {number} top - The new top position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.positionY = function (top, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translateY(${top}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Rotates the element.
- * @param {number} angle - The rotation angle in degrees.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.rotate = function (angle, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `rotate(${angle}deg)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Rotates the element around the X axis.
- * @param {number} angle - The rotation angle in degrees.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.rotateX = function (angle, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `rotateX(${angle}deg)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Rotates the element around the Y axis.
- * @param {number} angle - The rotation angle in degrees.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.rotateY = function (angle, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `rotateY(${angle}deg)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Scales the element in both X and Y directions.
- * @param {number} x - The scale factor in the X direction.
- * @param {number} y - The scale factor in the Y direction.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.scale = function (x, y, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `scale(${x}, ${y})`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Scales the element in the X direction.
- * @param {number} x - The scale factor in the X direction.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.scaleX = function (x, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `scaleX(${x})`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Scales the element in the Y direction.
- * @param {number} y - The scale factor in the Y direction.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.scaleY = function (y, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `scaleY(${y})`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Sets the callback function to be called when the animation starts.
- * @param {Function} callback - The callback function to be called when the animation starts.
- */
-htmlControl.prototype.setOnStart = function (callback) {
-    this._onStart = callback;
-};
-
-/**
- * Sets the callback function to be called when the animation ends.
- * @param {Function} callback - The callback function to be called when the animation ends.
- */
-htmlControl.prototype.setOnCompleted = function (callback) {
-    this._onCompleted = callback;
-};
-
-/**
- * Starts the animation queue.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.start = function () {
-    if (this._onStart) {
-        this._onStart();
-    }
-    this._isAnimating = true;
-    this._executeNextAnimation();
-    return this;
-};
-
-/**
- * Executes the next animation in the queue.
- * @private
- */
-htmlControl.prototype._executeNextAnimation = function () {
-    if (this._animationQueue.length > 0) {
-        this._currentAnimation = this._animationQueue.shift();
-        this._currentAnimation().then(() => {
-            this._executeNextAnimation();
-        });
-    } else {
-        this.end();
-    }
-};
-
-/**
- * Executes a function after the current animation finishes.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.then = function () {
-    this._animationQueue.push(() => Promise.resolve());
-    return this;
-};
-
-/**
- * Translates the element to a new position.
- * @param {number} left - The new left position.
- * @param {number} top - The new top position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.translate = function (left, top, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translate(${left}px, ${top}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Translates the element horizontally.
- * @param {number} left - The new left position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.translateX = function (left, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translateX(${left}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Translates the element vertically.
- * @param {number} top - The new top position.
- * @param {number} duration - The duration of the animation in milliseconds.
- * @param {number} [delay=0] - The delay before the animation starts in milliseconds.
- * @returns {htmlControl} - The instance for chaining.
- */
-htmlControl.prototype.translateY = function (top, duration, delay = 0) {
-    this._animationQueue.push(() => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.element.style.transform = `translateY(${top}px)`;
-                this.element.style.transition = `transform ${duration}ms`;
-                this.element.addEventListener(
-                    "transitionend",
-                    () => resolve(),
-                    { once: true }
-                );
-            }, delay);
-        });
-    });
-    return this;
-};
-
-/**
- * Handles the end of an animation.
- * @private
- */
-htmlControl.prototype._onAnimationEnd = function () {
-    this._isAnimating = false;
-    if (this._animationQueue.length > 0) {
-        this._executeNextAnimation();
-    } else if (this._onCompleted) {
-        this._onCompleted();
-    }
-};
-
-// Define Additional html Methods
-
-/**
- * Creates an html request that extends on fetch by adding retries and timeout
- * @param {string} url
- * @param {object} options
- * @param {interger} retries
- * @param {number} timeout
- * @returns
- */
-html.HttpRequest = async (url, options = {}, retries = 3, timeout = 5000) => {
-    const timeout_function = function (ms) {
-        new Promise((_, reject) => {
-            setTimeout(() => {
-                reject(new Error(`Request Has Timed Out`));
-            }, ms);
-        });
-    };
-
-    // perform the fetch operation with retry logic
-    const fetch_with_retry = async (url, options, retries) => {
-        for (let attempt = 1; attempt <= retries; attempt++) {
-            try {
-                const response = await Promise.race([
-                    fetch(url, options),
-                    timeout_function(timeout),
-                ]);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                return response;
-            } catch (error) {
-                if (attempt === retries) {
-                    throw error;
-                }
-            }
-        }
-    };
-
-    try {
-        const response = await fetch_with_retry(url, options, retries);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Fetch failed:", error);
-        throw error;
     }
 };
 
 // Define individual classes for each HTML element that extends htmlControl
 
 const htmlCreateElement = class extends htmlControl {
+    /**
+     * @param {any} tag
+     */
+    // @ts-ignore
     constructor(parent, tag) {
         super();
         this.element = document.createElement(tag);
@@ -935,6 +479,10 @@ const htmlCreateElement = class extends htmlControl {
 };
 
 const htmlButton = class extends htmlControl {
+    /**
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, text) {
         super();
         this.element = document.createElement("button");
@@ -945,6 +493,10 @@ const htmlButton = class extends htmlControl {
 };
 
 const htmlImage = class extends htmlControl {
+    /**
+     * @param {any[]} sources
+     */
+    // @ts-ignore
     constructor(parent, sources) {
         super();
         this.element = document.createElement("img");
@@ -956,6 +508,10 @@ const htmlImage = class extends htmlControl {
 };
 
 const htmlText = class extends htmlControl {
+    /**
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, text, props = {}) {
         super();
         this.element = document.createElement("span");
@@ -966,11 +522,16 @@ const htmlText = class extends htmlControl {
 };
 
 const htmlList = class extends htmlControl {
+    /**
+     * @param {any[]} list
+     */
+    // @ts-ignore
     constructor(parent, list, props = {}) {
         super();
         this.element = document.createElement("ul");
+        // @ts-ignore
         if (props.type) this.element.type = props.type;
-        list.forEach((item) => {
+        list.forEach((/** @type {string | null} */ item) => {
             const li = document.createElement("li");
             li.textContent = item;
             this.element.appendChild(li);
@@ -981,6 +542,10 @@ const htmlList = class extends htmlControl {
 };
 
 const htmlInput = class extends htmlControl {
+    /**
+     * @param {string} type
+     */
+    // @ts-ignore
     constructor(parent, type, props = {}) {
         super();
         this.element = document.createElement("input");
@@ -991,6 +556,10 @@ const htmlInput = class extends htmlControl {
 };
 
 const htmlProgress = class extends htmlControl {
+    /**
+     * @param {number} value
+     */
+    // @ts-ignore
     constructor(parent, value, props = {}) {
         super();
         this.element = document.createElement("progress");
@@ -1001,6 +570,7 @@ const htmlProgress = class extends htmlControl {
 };
 
 const htmlDiv = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, props = {}) {
         super();
         this.element = document.createElement("div");
@@ -1010,6 +580,10 @@ const htmlDiv = class extends htmlControl {
 };
 
 const htmlParagraph = class extends htmlControl {
+    /**
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, text, props = {}) {
         super();
         this.element = document.createElement("p");
@@ -1020,6 +594,11 @@ const htmlParagraph = class extends htmlControl {
 };
 
 const htmlHeader = class extends htmlControl {
+    /**
+     * @param {any} level
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, level, text, props = {}) {
         super();
         this.element = document.createElement(`h${level}`);
@@ -1030,6 +609,11 @@ const htmlHeader = class extends htmlControl {
 };
 
 const htmlAnchor = class extends htmlControl {
+    /**
+     * @param {string} href
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, href, text, props = {}) {
         super();
         this.element = document.createElement("a");
@@ -1041,6 +625,7 @@ const htmlAnchor = class extends htmlControl {
 };
 
 const htmlForm = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, props = {}) {
         super();
         this.element = document.createElement("form");
@@ -1050,6 +635,7 @@ const htmlForm = class extends htmlControl {
 };
 
 const htmlTable = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, headers = [], rows = [], props = {}) {
         super();
         this.element = document.createElement("table");
@@ -1070,7 +656,7 @@ const htmlTable = class extends htmlControl {
             const tbody = document.createElement("tbody");
             rows.forEach((row) => {
                 const tr = document.createElement("tr");
-                row.forEach((cellText) => {
+                row.forEach((/** @type {string | null} */ cellText) => {
                     const td = document.createElement("td");
                     td.textContent = cellText;
                     tr.appendChild(td);
@@ -1085,6 +671,7 @@ const htmlTable = class extends htmlControl {
 };
 
 const htmlSelect = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, options = [], props = {}) {
         super();
         this.element = document.createElement("select");
@@ -1101,6 +688,10 @@ const htmlSelect = class extends htmlControl {
 };
 
 const htmlIframe = class extends htmlControl {
+    /**
+     * @param {string} src
+     */
+    // @ts-ignore
     constructor(parent, src, props = {}) {
         super();
         this.element = document.createElement("iframe");
@@ -1111,6 +702,10 @@ const htmlIframe = class extends htmlControl {
 };
 
 const htmlLabel = class extends htmlControl {
+    /**
+     * @param {string | null} text
+     */
+    // @ts-ignore
     constructor(parent, text, props = {}) {
         super();
         this.element = document.createElement("label");
@@ -1121,6 +716,7 @@ const htmlLabel = class extends htmlControl {
 };
 
 const htmlVideo = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, sources = [], props = {}) {
         super();
         this.element = document.createElement("video");
@@ -1135,6 +731,7 @@ const htmlVideo = class extends htmlControl {
 };
 
 const htmlAudio = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, sources = [], props = {}) {
         super();
         this.element = document.createElement("audio");
@@ -1149,6 +746,7 @@ const htmlAudio = class extends htmlControl {
 };
 
 const htmlTextarea = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, value = "", props = {}) {
         super();
         this.element = document.createElement("textarea");
@@ -1159,6 +757,7 @@ const htmlTextarea = class extends htmlControl {
 };
 
 const htmlFieldset = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, legendText = "", props = {}) {
         super();
         this.element = document.createElement("fieldset");
@@ -1173,6 +772,7 @@ const htmlFieldset = class extends htmlControl {
 };
 
 const htmlDatalist = class extends htmlControl {
+    // @ts-ignore
     constructor(parent, options = [], props = {}) {
         super();
         this.element = document.createElement("datalist");
@@ -1204,6 +804,11 @@ let viewOptions = [
     "filly",
 ];
 
+/**
+ *
+ * @param {HTMLElement} element
+ * @param {string} options
+ */
 const optionsApi = (element, options) => {
     const functions = {
         noscrollbar: () => {
@@ -1316,6 +921,7 @@ const optionsApi = (element, options) => {
         .split(",")
         .forEach((el) => {
             if (viewOptions.includes(el)) {
+                // @ts-ignore
                 functions[el]();
             } else {
                 console.error(`Unknown option: ${el}`);
@@ -1323,6 +929,11 @@ const optionsApi = (element, options) => {
         });
 };
 
+/**
+ * @param {HTMLElement} layout
+ * @param {string} type
+ * @param {string} options
+ */
 function layoutFitApi(layout, type, options) {
     options ? optionsApi(layout, options) : null;
 
@@ -1343,8 +954,14 @@ function layoutFitApi(layout, type, options) {
     } else console.error("Unknown Layout ", layout);
 }
 
+/**
+ * @param {string} orient
+ */
+
+// @ts-ignore
 const lockOrientation = async (orient) => {
     try {
+        // @ts-ignore
         await screen.orientation.lock(orient);
     } catch (err) {
         console.info(err);
@@ -1356,11 +973,12 @@ const generateClassName = (() => {
     return () => `roseview-class-${counter++}`;
 })();
 
-const generateContainerId = (() => {
-    let counter = 0;
-    return () => `roseview-container-${counter++}`;
-})();
-
+/**
+ * Add css properties in form of an object, works like
+ * Emotion in React
+ * @param {object} styles
+ * @returns ClassName
+ */
 const cssParser = (styles) => {
     const className = generateClassName();
     const styleSheet =
@@ -1368,9 +986,18 @@ const cssParser = (styles) => {
         document.head.appendChild(document.createElement("style")).sheet;
 
     let cssString = "";
+
+    /**
+     *  @type{Array<any> | null}
+     */
     let nestedCssRules = [];
+
+    /**
+     *  @type{Array<any> | null}
+     */
     let mediaQueryRules = [];
 
+    // @ts-ignore
     const parseStyles = (styles, selector) => {
         let baseStyles = "";
         Object.entries(styles).forEach(([key, value]) => {
@@ -1432,6 +1059,7 @@ const cssParser = (styles) => {
     return className;
 };
 
+// @ts-ignore
 const transitionApi = {
     fadeIn: cssParser({
         "@keyframes fadeIn": {
@@ -1482,244 +1110,6 @@ const transitionApi = {
     }),
 };
 
-const htmlPage = {
-    routeMap: new Map(),
-    history: [],
-    suppressHashChange: false,
-    originalUrl: window.location.pathname,
-
-    hiddenContainer: cssParser({
-        display: "none !important",
-        visibility: "hidden !important",
-    }),
-    /*
-	Build(route, container) {
-		// Listen for hashchange events to handle browser navigation
-		window.onhashchange = this.handleHashChange.bind(this);
-		if (window.location.hash !== "#index") {
-			this.handleHashChange(window.location.hash);
-		}
-
-		// Declare and save state of main view
-		if (route === "index") {
-			let fragment = document.createDocumentFragment();
-			fragment.appendChild(container.element);
-			document.body.appendChild(fragment);
-
-			window.location.hash = `#index`;
-			this.suppressHashChange = true;
-			// Delay resetting the flag to allow the hash change to complete
-			setTimeout(() => {
-				this.suppressHashChange = false;
-			}, 100);
-
-			this.history.push(`#${route}`);
-			container.element.id = generateContainerId();
-			this.routeMap.set(`#${route}`, container.element.id);
-		}
-
-		// This condition is for things like toasts, bottomsheet & more
-		// condition will not add to thr routeMap
-		else if (route === null) {
-			let fragment = document.createDocumentFragment();
-			fragment.appendChild(container.element);
-			document.body.appendChild(fragment);
-
-			container.classes = this.hiddenContainer;
-			container.element.id = generateContainerId();
-		}
-
-		// All other navigational containers here
-		else {
-			let fragment = document.createDocumentFragment();
-			fragment.appendChild(container.element);
-			document.body.appendChild(fragment);
-
-			container.element.classList.add(this.hiddenContainer);
-			container.element.id = generateContainerId();
-			this.routeMap.set(`#${route}`, container.element.id);
-		}
-	},
-	
-	Open(route, pageTransition) {
-		if (!this.routeMap.get(route)) {
-			return false;
-		}
-
-		let path = window.location.hash;
-		if (path === "" || path === "/") path = "#index";
-
-		// Adjusting route to index if needed
-		if (route === " " || route === "/") {
-			route = "#index";
-		}
-
-		// Prevent animation when navigating to the index route
-
-		// Adjust the path if it's the same as the route
-		if (path === route) {
-			path = this.history.slice(-1)[0];
-		}
-
-		let route_to_show = document.getElementById(this.routeMap.get(route));
-		let route_to_hide = document.getElementById(this.routeMap.get(path));
-
-		// Get the animations for the current route
-		const { animationInClass, animationOutClass } = pageTransitions[route] || {};
-
-		// Hide the current route with the out animation
-		if (pageTransitions[route]) {
-			// Skip Animations If Its To Home Navigation
-			if (route === "#index") {
-				this.history.push(route);
-				window.location.hash = route;
-				route_to_show.classList.remove(this.hiddenContainer);
-				route_to_hide.classList.add(this.hiddenContainer);
-			} else {
-				// Listen for the animation end event to hide the element
-				route_to_hide.addEventListener(
-					"animationend",
-					() => {
-						// Ensure that the element is properly hidden
-						// Clean up the animation class
-						route_to_hide.classList.remove(animationOutClass);
-					},
-					{ once: true }
-				);
-				route_to_hide.classList.add(animationOutClass);
-				route_to_hide.classList.add(this.hiddenContainer);
-			}
-		} else {
-			// No animation out, hide immediately
-			route_to_show.classList.remove(this.hiddenContainer);
-			route_to_hide.classList.add(this.hiddenContainer);
-		}
-
-		// Show the new route with the in animation
-
-		if (animationInClass) {
-			route_to_show.classList.remove(this.hiddenContainer);
-			route_to_show.classList.add(animationInClass);
-		}
-
-		this.history.push(route);
-		window.location.hash = route;
-
-		this.suppressHashChange = true;
-		// Delay resetting the flag to allow the hash change to complete
-		setTimeout(() => {
-			this.suppressHashChange = false;
-		}, 100);
-	},
-	backCounter: 2,
-
-	handleHashChange() {
-		// Ignore the hash change if suppressHashChange is true
-		if (this.suppressHashChange) {
-			return false;
-		}
-		let path = window.location.hash;
-
-		// Sync history when hash changes via browser navigation
-		if (!this.history.includes(path)) {
-			this.history.push(path); // Update the custom history
-		}
-		if (path === "/" || path === "") path = "#index";
-		htmlPage.Open(path);
-	},
-
-	Back(pageTransitions) {
-		let lastRoute = this.history.slice(-this.backCounter)[0];
-
-		// Find the index of lastRoute in the history array
-		let index = this.history.indexOf(lastRoute);
-
-		if (index > -1) {
-			// Remove lastRoute from the history array
-			this.history.splice(index, 1);
-		}
-
-		htmlPage.Open(lastRoute, pageTransitions);
-
-		// Increment the backCounter after each call
-		this.backCounter++;
-
-		// Optional: Reset backCounter when needed, for example, if it exceeds history length
-		if (this.backCounter > this.history.length) {
-			this.backCounter = 2; // Reset to -2 when we have gone through all available history
-		}
-	},
-
-	Init() {
-		document.body.style.margin = 0;
-		document.body.style.width = "100%";
-	},
-
-	*/
-
-    /**'
-     * Load StyleSheet
-     */
-    LoadStyle(dir) {
-        const link = document.createElement("link");
-        link.href = dir;
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        document.head.appendChild(link);
-    },
-
-    /**
-     * Get System Theme
-     */
-    get Theme() {
-        const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-        if (darkThemeMq.matches) {
-            return "dark";
-        } else return "light";
-    },
-
-    /**
-     * Set the page orientation,
-     * use landscape or portrait
-     */
-    set Orient(val) {
-        if (val.toLowerCase() === "landscape") {
-            lockOrientation("landscape");
-            this.Orient = "landscape";
-        } else {
-            lockOrientation("portrait");
-            this.Orient = "portrait";
-        }
-    },
-
-    /**
-     * Get Page Orientation
-     */
-    get Orient() {
-        return this.Orient;
-    },
-
-    /**
-     * @param {string} title
-     */
-    set Title(title) {
-        document.title = title;
-    },
-
-    /**
-     * @param {any} path
-     */
-    set Icon(path) {
-        const link =
-            document.querySelector("link[rel*='icon']") ||
-            document.html("link");
-        link.type = "image/x-icon";
-        link.rel = "shortcut icon";
-        link.href = path;
-        document.getElementsByTagName("head")[0].appendChild(link);
-    },
-};
-
 const htmlContainer = class extends htmlControl {
     constructor(type = "linear", options = "fillxy,vcenter") {
         super();
@@ -1727,42 +1117,26 @@ const htmlContainer = class extends htmlControl {
         this.element = document.createElement("div");
         type ? layoutFitApi(this.element, type, options) : null;
     }
-
-    // Transition method for page switching
-    set Transition(pageTransition) {
-        if (!this.route) {
-            return;
-        }
-
-        // Check if the transition given exists in the transition api
-        // If False, create a new one, If true register it then if null use fallback
-
-        if (!Boolean(transitionApi[pageTransition[0]])) {
-            const animationInClass = pageTransition[0] || transitionApi.fadeIn;
-            const animationOutClass =
-                pageTransition[1] || transitionApi.fadeOut;
-            pageTransitions[`#${this.route}`] = {
-                animationInClass,
-                animationOutClass,
-            };
-        } else {
-            const animationInClass =
-                transitionApi[pageTransition[0]] || transitionApi.fadeIn;
-            const animationOutClass =
-                transitionApi[pageTransition[1]] || transitionApi.fadeOut;
-            pageTransitions[`#${this.route}`] = {
-                animationInClass,
-                animationOutClass,
-            };
-        }
-    }
 };
 
+/**
+ * This function is used to attach the main component
+ * of your app, so as to mount plugins
+ * @param {Function} mainComponent
+ * @returns
+ */
 const createApp = function (mainComponent) {
     const app = {
         _rootComponent: mainComponent,
         _plugins: [],
 
+        /**
+         * An Elements Id
+         * The provided string is queried so that the
+         * main component is appended to it.
+         * @param {string} selector
+         * @returns this
+         */
         mount: function (selector) {
             const container = document.querySelector(selector);
             if (!container) {
@@ -1770,18 +1144,27 @@ const createApp = function (mainComponent) {
                 return;
             }
 
-            document.body.style.margin = 0;
+            document.body.style.margin = "0";
             document.body.style.width = "100%";
 
             container.innerHTML = "";
             const instance = this._rootComponent;
+            // @ts-ignore
             container.appendChild(instance.element);
             return this;
         },
 
+        /**
+         *
+         * @param {Function} plugin
+         * @returns this
+         */
         use(plugin) {
+            // @ts-ignore
             if (typeof plugin._install === "function") {
+                // @ts-ignore
                 plugin._install(this);
+                // @ts-ignore
                 this._plugins.push(plugin);
             }
             return this;
@@ -1790,4 +1173,4 @@ const createApp = function (mainComponent) {
     return app;
 };
 
-export { html, htmlPage, createApp, cssParser };
+export { html, createApp, cssParser };

@@ -24,7 +24,7 @@ After that the next step is to use the cli tool to create a new project.
 In your projects dont forget to import : )
 
 ```javascript
-import { html, cssParser } from 'roseview/core'
+import { html, cssParser } from 'roseview'
 ```
 
 ## Getting Started
@@ -84,8 +84,8 @@ The first parameter of layouts is the hash route therefore they can be added in 
 ```javascript
 // Main Testing Script For roseview Features
 
-import { HashRouter } from "roseview/router";
-import { createApp } from "roseview/core";
+import { HashRouter } from "roseview";
+import { createApp } from "roseview";
 
 import main from "./pages/main.js";
 import about from "./pages/about.js";
@@ -103,7 +103,7 @@ window.app = createApp(main).use(router).mount("#app");
 In your main.js page you would have something like this :
 
 ```javascript
-import { html } from "roseview/core";
+import { html } from "roseview";
 
 let main = html.CreateLayout("linear", "center, scrolly, fillxy");
 
@@ -196,44 +196,6 @@ Check This Page:
 
 - [Methods Docs](docs/Methods.md)
 
-#### Animations
-
-Use the animationSequence method which allows you to use these methods to animate elements
-
-```console
-scale(x, y, duration, delay);
-
-scaleX(x, duration, delay);
-
-scaleY(y, duration, delay);
-
-alpha(alpha, duration, delay);
-
-end();
-
-rotate(angle, duration, delay);
-
-rotateX(angle, duration, delay);
-
-rotateY(angle, duration, delay);
-
-then();
-
-position, positionX, positionY;
-
-translate, translateX, translateY;
-
-setOnStart();
-
-setOnCompleted();
-
-start();
-```
-
-Check This Page:
-
-- [Animation Docs](docs/Animation.md)
-
 ### Accesing DOM Methods
 
 To use the  available javascript methods add 'element' to the caller.
@@ -241,17 +203,6 @@ To use the  available javascript methods add 'element' to the caller.
 ````javascript
 btn.element.textContent = 'DOM Access'
 ````
-
-### htmlPage Object
-
-This object allows you to tweak thing like the title, set icons, the most poweful are moving pages.
-
-```javascript
-htmlPage.LoadStyle()
-htmlPage.LoadScript()
-htmlPage.Theme
-htmlPage.Orient
-```
 
 ### Achieving Reactivity
 
