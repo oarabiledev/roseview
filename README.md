@@ -20,6 +20,12 @@ After that the next step is to use the cli tool to create a new project.
 npx create-rose-app your-project-name
 ```
 
+To run your project run the command:
+
+```bash
+npm run dev
+```
+
 ---
 
 ### The Concept Of Layouts
