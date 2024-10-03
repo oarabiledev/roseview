@@ -253,10 +253,14 @@ const htmlControl = class {
     }
 
     /**
-     * Add Element Contained Styles To That Element, refer to docs
-     * @param {*} styles
+     * Adds CSS styles to the element using the provided styles.
+     * Accepts styles as either an object or a template literal, and applies the styles by generating a class.
+     * The class is added to the element's class list.
+     *
+     * @param {object | TemplateStringsArray} styles - CSS styles as an object or a template literal.
+     * @returns {this} - Returns the instance of the class for chaining.
      */
-    style(styles) {
+    css(styles) {
         const className = cssParser(styles);
         this.element.classList.add(className);
         this.elementClasses.push(className);
@@ -308,6 +312,19 @@ const htmlControl = class {
             });
         });
         return this;
+    }
+
+    /**
+     * Inserts HTML content into an element by processing template literal strings.
+     *
+     * @param {TemplateStringsArray} strings - The array of strings in the template literal.
+     * @param {...any} values - The interpolated values from the template literal.
+     */
+    html(strings, ...values) {
+        let htmlString = strings.reduce((result, str, i) => {
+            return result + str + (values[i] || "");
+        }, "");
+        this.element.innerHTML = htmlString;
     }
 
     /**
@@ -974,12 +991,14 @@ const generateClassName = (() => {
 })();
 
 /**
- * Add css properties in form of an object, works like
- * Emotion in React
- * @param {object} styles
- * @returns ClassName
+ * Add CSS properties, works with both template literals and objects (like Emotion in React).
+ * Automatically detects the type of input and returns a class name.
+ *
+ * @param {TemplateStringsArray | object} styles - CSS styles as either a template literal or an object.
+ * @param {...any} values - Optional values for template literals.
+ * @returns {string} ClassName - The generated class name.
  */
-const cssParser = (styles) => {
+const cssParser = (styles, ...values) => {
     const className = generateClassName();
     const styleSheet =
         document.styleSheets[0] ||
@@ -988,16 +1007,23 @@ const cssParser = (styles) => {
     let cssString = "";
 
     /**
-     *  @type{Array<any> | null}
+     * @type {Array<any> | null}
      */
     let nestedCssRules = [];
 
     /**
-     *  @type{Array<any> | null}
+     * @type {Array<any> | null}
      */
     let mediaQueryRules = [];
 
-    // @ts-ignore
+    /**
+     * Parses a style object and generates a CSS string.
+     * Handles nested selectors, pseudo-classes, and media queries.
+     *
+     * @param {object} styles - An object representing CSS properties and values.
+     * @param {string} selector - The CSS selector to apply the styles to.
+     * @returns {string} - A string representing the base CSS styles for the selector.
+     */
     const parseStyles = (styles, selector) => {
         let baseStyles = "";
         Object.entries(styles).forEach(([key, value]) => {
@@ -1031,8 +1057,18 @@ const cssParser = (styles) => {
         return baseStyles;
     };
 
-    cssString = parseStyles(styles, `.${className}`);
+    // Check if 'styles' is a template literal or an object
+    if (typeof styles === "object" && !Array.isArray(styles)) {
+        // It's an object, so we parse it
+        cssString = parseStyles(styles, `.${className}`);
+    } else if (Array.isArray(styles)) {
+        // It's a template literal, combine strings and values into CSS string
+        cssString = styles.reduce((result, str, i) => {
+            return result + str + (values[i] || "");
+        }, "");
+    }
 
+    // Insert base class CSS rule
     if (cssString) {
         styleSheet.insertRule(
             `.${className} { ${cssString} }`,
@@ -1040,6 +1076,7 @@ const cssParser = (styles) => {
         );
     }
 
+    // Insert nested CSS rules
     nestedCssRules.forEach(({ selector, styles }) => {
         const nestedCssString = parseStyles(styles, selector);
         if (nestedCssString) {
@@ -1048,6 +1085,7 @@ const cssParser = (styles) => {
         }
     });
 
+    // Insert media query rules
     mediaQueryRules.forEach(({ media, selector, styles }) => {
         const nestedCssString = parseStyles(styles, selector);
         if (nestedCssString) {

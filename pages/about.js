@@ -1,21 +1,12 @@
 import { html } from "roseview";
+import TonalButton from "../components/tonalButton.js";
 
-let about = html.CreateLayout("linear", "fillxy, center");
+let aboutPage = html.CreateLayout("linear", "fillxy, center");
 
-let aboutMsg = html.Text(about, "Hello, This Is About Section");
-
-let btn = html.Button(about, "Go Forwad 😋");
-btn.classes = "pacifico-regular";
-
-btn.on("click", function () {
-    app.router.forward();
-});
-
-let btnv = html.Button(about, "Go To Partners 😋");
-btnv.classes = "pacifico-regular";
+let btnv = TonalButton(aboutPage, "Go To Partners 😋");
 
 btnv.on("click", function () {
     app.router.navigate("about/partners");
 });
 
-export default about;
+export default aboutPage;
