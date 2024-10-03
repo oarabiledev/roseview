@@ -1,17 +1,11 @@
-# What Is RoseView ?
+# 🔥RoseView (v0.1.9)
 
 Roseview is a client side framework, designed to simplify the creation of single page applications and mulitipage applications. Roseview uses the android model and mixes it with the html model.
 
 - RoseView uses the concept of layouts
 - RoseView uses hashbased routing for quicker navigation and file based routing for views with many elements
 
-## Why RoseView ?
-
-Many ideas have come up on how web development should be done, however not many frameworks rely on using pure syntacticall javascript. Some use jsx and others create their own.
-
-roseview aims to be simple and easy to master.
-
-## Installation
+## 🚀 Getting Started
 
 You can also install roseview in node by :
 
@@ -27,9 +21,8 @@ In your projects dont forget to import : )
 import { html, cssParser } from 'roseview'
 ```
 
-## Getting Started
+---
 
-Even though typescript was not used, i have tried to add jsdoc on the relevant pieces that you will interact with.
 
 ### The Concept Of Layouts
 
