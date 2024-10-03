@@ -9,20 +9,18 @@ Roseview is a client side framework, designed to simplify the creation of single
 
 You can also install roseview in node by :
 
-`npm install roseview`,
+```bash
+npm install roseview
+```
+
 
 After that the next step is to use the cli tool to create a new project.
 
-`create-rose-app appName`
-
-In your projects dont forget to import : )
-
-```javascript
-import { html, cssParser } from 'roseview'
+```bash
+npx create-rose-app your-project-name
 ```
 
 ---
-
 
 ### The Concept Of Layouts
 
