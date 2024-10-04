@@ -1,18 +1,14 @@
-# 🔥RoseView (v0.1.9)
+# 🔥RoseView (v0.2.0)
 
-Roseview is a client side framework, designed to simplify the creation of single page applications and mulitipage applications. Roseview uses the android model and mixes it with the html model.
-
-- RoseView uses the concept of layouts
-- RoseView uses hashbased routing for quicker navigation and file based routing for views with many elements
+Roseview is a client side framework, designed to simplify the creation of single page applications.
 
 ## 🚀 Getting Started
 
-You can also install roseview in node by :
+You can also install roseview in by :
 
 ```bash
 npm install roseview
 ```
-
 
 After that the next step is to use the cli tool to create a new project.
 
@@ -37,6 +33,8 @@ let main = html.CreateLayout(type, alignmentOptions);
 
 
 let main = html.CreateLayout("linear", "center, scrolly, fillxy");
+
+// Always default export your main layout in that page
 ````
 
 The option "FillXY", is useful for fullscreen layouts, layouts can be created to form a toast, banner, bottomsheet.
@@ -57,11 +55,14 @@ Alignment options available are :
 
 ### Then Everything Else
 
-The `html` object has many available html elements (Buttons / Images) which are exposed after adding the '.'
+The `html` object has many available html elements (Buttons / Images) which are exposed after adding the '.' by your lsp.
+
+All you need to do is add the `html.` then add an Html element with the first letter being in caps.
 
 ```javascript
 html.Button
 html.Image
+html.Anchor
 ````
 
 However if the html element you want to use is not available or you are using special tags, use this :
@@ -70,13 +71,13 @@ However if the html element you want to use is not available or you are using sp
 html.Element(parent, HTMLELEMENT)
 ```
 
+Also this is different when it comes to text, i decided to use a special method, that is `html.Text`
+
 All functions of this object take in the first parameter as the parent, basically the layout they must attach to, then the following parameters are exposed through the lsp (jsDOC also available).
 
 ### Page Routing
 
-For now roseview supports only hash based routing which is still buggy but a fix is being deployed.
-
-The first parameter of layouts is the hash route therefore they can be added in this manner :
+For now roseview supports only hash based routing.
 
 ```javascript
 // Main Testing Script For roseview Features
@@ -115,10 +116,10 @@ export default main;
 
 ### Styling Elements
 
-To style your elements use the `.style` method which takes in an object and converts it into a style.
+To style your elements use the `.css` method which takes in an object or a template literall and converts it into a style (in form of a unique class) which is attached to the document and element.
 
 ```javascript
-txt.style({
+txt.css({
    position: "relative",
    lineHeight : "18px",
 
@@ -132,6 +133,33 @@ txt.style({
     color: "red"
    }
 })
+```
+
+You could also do this:
+
+```javascript
+button.css`
+    border: 2px solid #6200ea;
+    color: #6200ea;
+    background-color: transparent; 
+    font-family: "Archivo", sans-serif;
+    font-weight: 500; 
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+    padding: 0.5rem 1rem; 
+    transition: background-color 0.3s, color 0.3s;
+    
+    &:hover {
+        background-color: #6200ea; 
+        color: white; 
+    }
+
+    &:active {
+        background-color: #3700b3; 
+        border-color: #3700b3; 
+    }
+    `;
 ```
 
 #### Adding Classes
@@ -156,9 +184,9 @@ main.setChildMargins = "null, 15px";
 Additionally to modify properties without adding stress to the DOM use the `batchProps` method which takes in an object of modifications and uses `requestAnimationFrame`.
 
 ```javascript
-btn.props({
-textContent : 'Hi',
-style.color : 'red'
+btn.batchProps({ 
+    textContent : 'Hi',
+    style.color : 'red'
 })
 ```
 
@@ -181,17 +209,9 @@ loginBtn.on("click", () => {
 });
 ```
 
-##### bindInput
-
-This method binds a signal (where input is) to where input is displayed at.
-
 ##### addChild / destroyChild
 
 If you want to add an element as a child of another use addChild, then to destroy the element use destroyChild.
-
-Check This Page:
-
-- [Methods Docs](docs/Methods.md)
 
 ### Accesing DOM Methods
 

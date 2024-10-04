@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.1.9
+// 0.2.0
 
 "use strict";
 
@@ -264,6 +264,20 @@ const htmlControl = class {
         const className = cssParser(styles);
         this.element.classList.add(className);
         this.elementClasses.push(className);
+        return this;
+    }
+
+    /**
+     * For Legacy Reasons , This Is Maintained
+     * Adds CSS styles to the element using the provided styles.
+     * Accepts styles as either an object or a template literal, and applies the styles by generating a class.
+     * The class is added to the element's class list.
+     *
+     * @param {object | TemplateStringsArray} styles - CSS styles as an object or a template literal.
+     * @returns {this} - Returns the instance of the class for chaining.
+     */
+    style(styles) {
+        this.css(styles);
         return this;
     }
 
