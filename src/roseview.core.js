@@ -5,250 +5,27 @@
 // MIT
 
 // @version
-// 0.2.0
+// 0.2.1
+// @ts-nocheck
 
 "use strict";
 
-const html = {
-    /**
-     * Creates a special div which has options allowing
-     * you to define the position of its children.
-     * @param {string} type - The type of container (e.g., 'div', 'section').
-     * @param {string} options - Options to define the container's properties (e.g., style, class).
-     * @returns {htmlContainer} - A new htmlContainer instance.
-     */
-    CreateLayout: (type, options) => {
-        return new htmlContainer(type, options);
-    },
+/**
+ * Creates a special div which has options allowing
+ * you to define the position of its children.
+ * @param {string} type - The type of container (e.g., 'div', 'section').
+ * @param {string} options - Alignment options to define the childrens
+ * alignment in the container, so as the size of the container.
+ * @returns {htmlContainer} - A new htmlContainer instance.
+ */
+export function CreateLayout(type, options) {
+    return new htmlContainer(type, options);
+}
 
-    /***
-     * Add an HTMLElement
-     * @param {object} parent
-     * @param {HTMLElement} tag
-     */
-    Element: (parent, tag) => {
-        return new htmlCreateElement(parent, tag);
-    },
-
-    /**
-     * Creates a button element.
-     * @param {object} parent - The parent element to which the button will be appended.
-     * @param {string} text - The text content of the button.
-     * @returns {htmlButton} - A new htmlButton instance.
-     */
-    Button: (parent, text) => {
-        return new htmlButton(parent, text);
-    },
-
-    /**
-     * Creates an image element.
-     * @param {object} parent - The parent element to which the image will be appended.
-     * @param {string|string[]} sources - The source(s) of the image(s).
-     * @returns {htmlImage} - A new htmlImage instance.
-     */
-    Image: (parent, sources) => {
-        // @ts-ignore
-        return new htmlImage(parent, sources);
-    },
-
-    /**
-     * Creates a text element.
-     * @param {object} parent - The parent element to which the text will be appended.
-     * @param {string} text - The text content.
-     * @returns {htmlText} - A new htmlText instance.
-     */
-    Text: (parent, text) => {
-        return new htmlText(parent, text);
-    },
-
-    /**
-     * Creates a list element.
-     * @param {object} parent - The parent element to which the list will be appended.
-     * @param {string[]} list - An array of list items.
-     * @returns {htmlList} - A new htmlList instance.
-     */
-    List: (parent, list) => {
-        return new htmlList(parent, list);
-    },
-
-    /**
-     * Creates an input element.
-     * @param {object} parent - The parent element to which the input will be appended.
-     * @param {string} type - The type of input (e.g., 'text', 'checkbox').
-     * @returns {htmlInput} - A new htmlInput instance.
-     */
-    Input: (parent, type) => {
-        return new htmlInput(parent, type);
-    },
-
-    /**
-     * Creates a progress element.
-     * @param {object} parent - The parent element to which the progress element will be appended.
-     * @param {number} value - The initial value of the progress element.
-     * @returns {htmlProgress} - A new htmlProgress instance.
-     */
-    Progress: (parent, value) => {
-        return new htmlProgress(parent, value);
-    },
-
-    /**
-     * Creates a div element.
-     * @param {object} parent - The parent element to which the div will be appended.
-     * @returns {htmlDiv} - A new htmlDiv instance.
-     */
-    Div: (parent) => {
-        return new htmlDiv(parent);
-    },
-
-    /**
-     * Creates a paragraph element.
-     * @param {object} parent - The parent element to which the paragraph will be appended.
-     * @param {string} text - The text content of the paragraph.
-     * @returns {htmlParagraph} - A new htmlParagraph instance.
-     */
-    Paragraph: (parent, text) => {
-        return new htmlParagraph(parent, text);
-    },
-
-    /**
-     * Creates a header element.
-     * @param {object} parent - The parent element to which the header will be appended.
-     * @param {number} level - The level of the header (e.g., 1 for <h1>, 2 for <h2>).
-     * @param {string} text - The text content of the header.
-     * @returns {htmlHeader} - A new htmlHeader instance.
-     */
-    Header: (parent, level, text) => {
-        return new htmlHeader(parent, level, text);
-    },
-
-    /**
-     * Creates an anchor (link) element.
-     * @param {object} parent - The parent element to which the anchor will be appended.
-     * @param {string} href - The URL the anchor points to.
-     * @param {string} text - The text content of the anchor.
-     * @returns {htmlAnchor} - A new htmlAnchor instance.
-     */
-    Anchor: (parent, href, text) => {
-        return new htmlAnchor(parent, href, text);
-    },
-
-    /**
-     * Creates a form element.
-     * @param {object} parent - The parent element to which the form will be appended.
-     * @returns {htmlForm} - A new htmlForm instance.
-     */
-    Form: (parent) => {
-        return new htmlForm(parent);
-    },
-
-    /**
-     * Creates a table element.
-     * @param {object} parent - The parent element to which the table will be appended.
-     * @param {string[]} [headers=[]] - An array of table header titles.
-     * @param {string[][]} [rows=[]] - A 2D array representing the rows and columns of the table.
-     * @returns {htmlTable} - A new htmlTable instance.
-     */
-    Table: (parent, headers = [], rows = []) => {
-        return new htmlTable(parent, headers, rows);
-    },
-
-    /**
-     * Creates a select (dropdown) element.
-     * @param {object} parent - The parent element to which the select will be appended.
-     * @param {string[]} [options=[]] - An array of options for the dropdown.
-     * @returns {htmlSelect} - A new htmlSelect instance.
-     */
-    Select: (parent, options = []) => {
-        return new htmlSelect(parent, options);
-    },
-
-    /**
-     * Creates an iframe element.
-     * @param {object} parent - The parent element to which the iframe will be appended.
-     * @param {string} src - The source URL of the iframe.
-     * @returns {htmlIframe} - A new htmlIframe instance.
-     */
-    Iframe: (parent, src) => {
-        return new htmlIframe(parent, src);
-    },
-
-    /**
-     * Creates a label element.
-     * @param {object} parent - The parent element to which the label will be appended.
-     * @param {string} text - The text content of the label.
-     * @returns {htmlLabel} - A new htmlLabel instance.
-     */
-    Label: (parent, text) => {
-        return new htmlLabel(parent, text);
-    },
-
-    /**
-     * Creates a video element.
-     * @param {object} parent - The parent element to which the video will be appended.
-     * @param {Array<String>} sources - The source(s) of the video file(s).
-     * @returns {htmlVideo} - A new htmlVideo instance.
-     */
-    Video: (parent, sources = []) => {
-        return new htmlVideo(parent, sources);
-    },
-
-    /**
-     * Creates an audio element.
-     * @param {object} parent - The parent element to which the audio will be appended.
-     * @param {Array<String>} sources - The source(s) of the audio file(s).
-     * @returns {htmlAudio} - A new htmlAudio instance.
-     */
-    Audio: (parent, sources = []) => {
-        return new htmlAudio(parent, sources);
-    },
-
-    /**
-     * Creates a textarea element.
-     * @param {object} parent - The parent element to which the textarea will be appended.
-     * @param {string} [value=""] - The initial text value of the textarea.
-     * @returns {htmlTextarea} - A new htmlTextarea instance.
-     */
-    Textarea: (parent, value = "") => {
-        return new htmlTextarea(parent, value);
-    },
-
-    /**
-     * Creates a fieldset element.
-     * @param {object} parent - The parent element to which the fieldset will be appended.
-     * @param {string} [legendText=""] - The text for the fieldset's legend.
-     * @returns {htmlFieldset} - A new htmlFieldset instance.
-     */
-    Fieldset: (parent, legendText = "") => {
-        return new htmlFieldset(parent, legendText);
-    },
-
-    /**
-     * Creates a datalist element.
-     * @param {object} parent - The parent element to which the datalist will be appended.
-     * @param {string[]} [options=[]] - An array of options for the datalist.
-     * @returns {htmlDatalist} - A new htmlDatalist instance.
-     */
-    Datalist: (parent, options = []) => {
-        return new htmlDatalist(parent, options);
-    },
-};
-
-const htmlControl = class {
+export const roseComponent = class {
     constructor() {
-        /**
-         * @type {HTMLElement}
-         */
         this.element;
-        this.elementUid = null;
-
-        /**
-         * @type {Array<EventListener>}
-         */
         this.eventListeners = [];
-
-        /**
-         * @type {Array<string>}
-         */
         this.elementClasses = [];
     }
 
@@ -346,7 +123,7 @@ const htmlControl = class {
      * @param {Function} child
      */
     addChild(child) {
-        if (child instanceof htmlControl) {
+        if (child instanceof roseComponent) {
             this.element.appendChild(child.element);
         } else {
             console.error("Mounted Child Is Not A htmlComponent");
@@ -359,7 +136,7 @@ const htmlControl = class {
      * @param {object} child
      */
     destroyChild(child) {
-        if (child instanceof htmlControl) {
+        if (child instanceof roseComponent) {
             child.eventListeners.forEach((el) => {
                 // @ts-ignore
                 let [event, Fn] = el;
@@ -494,326 +271,33 @@ const htmlControl = class {
     }
 };
 
-// Define individual classes for each HTML element that extends htmlControl
-
-const htmlCreateElement = class extends htmlControl {
-    /**
-     * @param {any} tag
-     */
-    // @ts-ignore
-    constructor(parent, tag) {
+/**
+ * This class allows you to create and render html elements
+ * in your layout and add properties in an object style.
+ * @param {HTMLElement} parent - The parent element to attach this element to.
+ * @param {string} tag - The tag name of the element to create.
+ * @param {Object} props - The properties to apply to the element.
+ * @returns {HTMLElement} The created HTML element with methods and properties accessible.
+ */
+export const htmlElement = class extends roseComponent {
+    constructor(parent, tag, props = {}) {
         super();
+
+        /** @type {HTMLElement} */
         this.element = document.createElement(tag);
 
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlButton = class extends htmlControl {
-    /**
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, text) {
-        super();
-        this.element = document.createElement("button");
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlImage = class extends htmlControl {
-    /**
-     * @param {any[]} sources
-     */
-    // @ts-ignore
-    constructor(parent, sources) {
-        super();
-        this.element = document.createElement("img");
-        this.element.src = sources[0]; // Assuming sources is an array of image URLs
-        if (sources.length > 1) this.element.srcset = sources.join(", ");
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlText = class extends htmlControl {
-    /**
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, text, props = {}) {
-        super();
-        this.element = document.createElement("span");
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlList = class extends htmlControl {
-    /**
-     * @param {any[]} list
-     */
-    // @ts-ignore
-    constructor(parent, list, props = {}) {
-        super();
-        this.element = document.createElement("ul");
-        // @ts-ignore
-        if (props.type) this.element.type = props.type;
-        list.forEach((/** @type {string | null} */ item) => {
-            const li = document.createElement("li");
-            li.textContent = item;
-            this.element.appendChild(li);
-        });
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlInput = class extends htmlControl {
-    /**
-     * @param {string} type
-     */
-    // @ts-ignore
-    constructor(parent, type, props = {}) {
-        super();
-        this.element = document.createElement("input");
-        this.element.type = type;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlProgress = class extends htmlControl {
-    /**
-     * @param {number} value
-     */
-    // @ts-ignore
-    constructor(parent, value, props = {}) {
-        super();
-        this.element = document.createElement("progress");
-        this.element.value = value;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlDiv = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, props = {}) {
-        super();
-        this.element = document.createElement("div");
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlParagraph = class extends htmlControl {
-    /**
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, text, props = {}) {
-        super();
-        this.element = document.createElement("p");
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlHeader = class extends htmlControl {
-    /**
-     * @param {any} level
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, level, text, props = {}) {
-        super();
-        this.element = document.createElement(`h${level}`);
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlAnchor = class extends htmlControl {
-    /**
-     * @param {string} href
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, href, text, props = {}) {
-        super();
-        this.element = document.createElement("a");
-        this.element.href = href;
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlForm = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, props = {}) {
-        super();
-        this.element = document.createElement("form");
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlTable = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, headers = [], rows = [], props = {}) {
-        super();
-        this.element = document.createElement("table");
-
-        if (headers.length > 0) {
-            const thead = document.createElement("thead");
-            const headerRow = document.createElement("tr");
-            headers.forEach((headerText) => {
-                const th = document.createElement("th");
-                th.textContent = headerText;
-                headerRow.appendChild(th);
+        Object.entries(props).forEach(([key, value]) => {
+            requestAnimationFrame(() => {
+                this.element[key] = value;
             });
-            thead.appendChild(headerRow);
-            this.element.appendChild(thead);
+        });
+
+        if (parent) {
+            parent.addChild(this);
+        } else {
+            console.error("No Parent For Component To Attach To.");
+            return;
         }
-
-        if (rows.length > 0) {
-            const tbody = document.createElement("tbody");
-            rows.forEach((row) => {
-                const tr = document.createElement("tr");
-                row.forEach((/** @type {string | null} */ cellText) => {
-                    const td = document.createElement("td");
-                    td.textContent = cellText;
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            this.element.appendChild(tbody);
-        }
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlSelect = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, options = [], props = {}) {
-        super();
-        this.element = document.createElement("select");
-
-        options.forEach((option) => {
-            const opt = document.createElement("option");
-            opt.value = option.value || option;
-            opt.textContent = option.label || option;
-            this.element.appendChild(opt);
-        });
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlIframe = class extends htmlControl {
-    /**
-     * @param {string} src
-     */
-    // @ts-ignore
-    constructor(parent, src, props = {}) {
-        super();
-        this.element = document.createElement("iframe");
-        this.element.src = src;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlLabel = class extends htmlControl {
-    /**
-     * @param {string | null} text
-     */
-    // @ts-ignore
-    constructor(parent, text, props = {}) {
-        super();
-        this.element = document.createElement("label");
-        this.element.textContent = text;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlVideo = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, sources = [], props = {}) {
-        super();
-        this.element = document.createElement("video");
-        sources.forEach((src) => {
-            const source = document.createElement("source");
-            source.src = src;
-            this.element.appendChild(source);
-        });
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlAudio = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, sources = [], props = {}) {
-        super();
-        this.element = document.createElement("audio");
-        sources.forEach((src) => {
-            const source = document.createElement("source");
-            source.src = src;
-            this.element.appendChild(source);
-        });
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlTextarea = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, value = "", props = {}) {
-        super();
-        this.element = document.createElement("textarea");
-        this.element.value = value;
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlFieldset = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, legendText = "", props = {}) {
-        super();
-        this.element = document.createElement("fieldset");
-        if (legendText) {
-            const legend = document.createElement("legend");
-            legend.textContent = legendText;
-            this.element.appendChild(legend);
-        }
-
-        if (parent) parent.addChild(this);
-    }
-};
-
-const htmlDatalist = class extends htmlControl {
-    // @ts-ignore
-    constructor(parent, options = [], props = {}) {
-        super();
-        this.element = document.createElement("datalist");
-        options.forEach((option) => {
-            const optionElement = document.createElement("option");
-            optionElement.value = option;
-            this.element.appendChild(optionElement);
-        });
-
-        if (parent) parent.addChild(this);
     }
 };
 
@@ -961,6 +445,9 @@ const optionsApi = (element, options) => {
 };
 
 /**
+ * An internal api used by containers and elements, this
+ * function adds css required for certain types of
+ * layouts.
  * @param {HTMLElement} layout
  * @param {string} type
  * @param {string} options
@@ -986,33 +473,26 @@ function layoutFitApi(layout, type, options) {
 }
 
 /**
- * @param {string} orient
+ * An internal function that generates classnames
+ * for your scoped syles
+ * @returns string
  */
-
-// @ts-ignore
-const lockOrientation = async (orient) => {
-    try {
-        // @ts-ignore
-        await screen.orientation.lock(orient);
-    } catch (err) {
-        console.info(err);
-    }
-};
-
 const generateClassName = (() => {
     let counter = 0;
     return () => `roseview-class-${counter++}`;
 })();
 
 /**
- * Add CSS properties, works with both template literals and objects (like Emotion in React).
- * Automatically detects the type of input and returns a class name.
+ * Add CSS properties, works with both template literals
+ * and objects (like Emotion in React).
+ * Automatically detects the type of
+ * input and returns a class name.
  *
  * @param {TemplateStringsArray | object} styles - CSS styles as either a template literal or an object.
  * @param {...any} values - Optional values for template literals.
  * @returns {string} ClassName - The generated class name.
  */
-const cssParser = (styles, ...values) => {
+export const cssParser = (styles, ...values) => {
     const className = generateClassName();
     const styleSheet =
         document.styleSheets[0] ||
@@ -1111,58 +591,7 @@ const cssParser = (styles, ...values) => {
     return className;
 };
 
-// @ts-ignore
-const transitionApi = {
-    fadeIn: cssParser({
-        "@keyframes fadeIn": {
-            "0%": { opacity: "0" },
-            "100%": { opacity: "1" },
-        },
-        animation: "fadeIn 1s ease forwards",
-    }),
-
-    fadeOut: cssParser({
-        "@keyframes fadeOut": {
-            "0%": { opacity: "1" },
-            "100%": { opacity: "0" },
-        },
-        animation: "fadeOut 1s ease forwards",
-    }),
-
-    slideInLeft: cssParser({
-        "@keyframes slideInLeft": {
-            "0%": { transform: "translateX(-100%)" },
-            "100%": { transform: "translateX(0)" },
-        },
-        animation: "slideInLeft 1s ease forwards",
-    }),
-
-    slideOutRight: cssParser({
-        "@keyframes slideOutRight": {
-            "0%": { transform: "translateX(0)" },
-            "100%": { transform: "translateX(100%)" },
-        },
-        animation: "slideOutRight 1s ease forwards",
-    }),
-
-    slideInTop: cssParser({
-        "@keyframes slideInTop": {
-            "0%": { transform: "translateY(-100%)" },
-            "100%": { transform: "translateY(0)" },
-        },
-        animation: "slideInTop 1s ease forwards",
-    }),
-
-    slideOutBottom: cssParser({
-        "@keyframes slideOutBottom": {
-            "0%": { transform: "translateY(0)" },
-            "100%": { transform: "translateY(100%)" },
-        },
-        animation: "slideOutBottom 1s ease forwards",
-    }),
-};
-
-const htmlContainer = class extends htmlControl {
+const htmlContainer = class extends roseComponent {
     constructor(type = "linear", options = "fillxy,vcenter") {
         super();
 
@@ -1177,7 +606,7 @@ const htmlContainer = class extends htmlControl {
  * @param {Function} mainComponent
  * @returns
  */
-const createApp = function (mainComponent) {
+export const createApp = function (mainComponent) {
     const app = {
         _rootComponent: mainComponent,
         _plugins: [],
@@ -1224,5 +653,3 @@ const createApp = function (mainComponent) {
     };
     return app;
 };
-
-export { html, createApp, cssParser };

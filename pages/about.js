@@ -1,12 +1,8 @@
-import { html } from "roseview";
+import { CreateLayout } from "roseview";
 import TonalButton from "../components/tonalButton.js";
 
-let aboutPage = html.CreateLayout("linear", "fillxy, center");
+let aboutPage = CreateLayout("linear", "center, scrolly, fillxy");
 
-let btnv = TonalButton(aboutPage, "Go To Partners 😋");
-
-btnv.on("click", function () {
-    app.router.navigate("about/partners");
-});
+const div = TonalButton(aboutPage, "About Page");
 
 export default aboutPage;

@@ -1,7 +1,9 @@
-import { html } from "roseview";
+import { htmlElement } from "roseview";
 
 const TonalButton = function (parent, text) {
-    let button = html.Button(parent, text);
+    let button = new htmlElement(parent, "button", {
+        textContent: text,
+    });
     button.css`
     border: 2px solid #6200ea;
     color: #6200ea;

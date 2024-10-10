@@ -1,4 +1,4 @@
-# 🔥RoseView (v0.2.0)
+# 🔥RoseView (v0.2.1)
 
 Roseview is a client side framework, designed to simplify the creation of single page applications.
 
@@ -29,10 +29,11 @@ npm run dev
 A layout is a special div that takes in parameters like the hash route, type of layout, alignment options.
 
 ```javascript
-let main = html.CreateLayout(type, alignmentOptions);
+import { CreateLayout } from "roseview"
+let main = CreateLayout(type, alignmentOptions);
 
 
-let main = html.CreateLayout("linear", "center, scrolly, fillxy");
+let main = CreateLayout("linear", "center, scrolly, fillxy");
 
 // Always default export your main layout in that page
 ````
@@ -53,27 +54,24 @@ Alignment options available are :
 - horizontal / vertical
 - scrolly / scrollx / scrollxy
 
-### Then Everything Else
+### Adding Elements To Your Containers
 
-The `html` object has many available html elements (Buttons / Images) which are exposed after adding the '.' by your lsp.
-
-All you need to do is add the `html.` then add an Html element with the first letter being in caps.
+To add an html element use the `htmlElement` function, it is used like this :
 
 ```javascript
-html.Button
-html.Image
-html.Anchor
-````
+import { CreateLayout, htmlElement } from 'roseview'
 
-However if the html element you want to use is not available or you are using special tags, use this :
+let homePage = CreateLayout('linear', 'fillxy, center');
 
-```javascript
-html.Element(parent, HTMLELEMENT)
+let btn = new htmlElement(homePage, 'button', {
+  textContent: 'Hello World'})
+
+// The htmlElement class takes in the parent as the first
+// parameter, and then the element, and an object which 
+// allows adding properties.
+
+export homePage;
 ```
-
-Also this is different when it comes to text, i decided to use a special method, that is `html.Text`
-
-All functions of this object take in the first parameter as the parent, basically the layout they must attach to, then the following parameters are exposed through the lsp (jsDOC also available).
 
 ### Page Routing
 
@@ -101,16 +99,23 @@ window.app = createApp(main).use(router).mount("#app");
 In your main.js page you would have something like this :
 
 ```javascript
-import { html } from "roseview";
+import { CreateLayout, htmlElement } from "roseview";
 
-let main = html.CreateLayout("linear", "center, scrolly, fillxy");
+let main = CreateLayout("linear", "center, scrolly, fillxy");
 
-let btn = html.Button(main, "Go To About 😋");
+let btn = new htmlElement(main, 'button', { textContent: 'Go To About'})
+
+// Add an event listener this way 
 
 btn.on("click", function () {
     app.router.navigate("about");
 });
 
+// Or this way 
+
+btn.element.onclick = function(){
+    app.router.navigate('about')
+}
 export default main;
 ```
 
@@ -177,7 +182,7 @@ btn.removeClasses = 'class1'
 There is the `setMargins / setChildMargins / setPosition` getters which allow you to change spacing without editing css directly.
 
 ```javascript
-let main = html.CreateLayout("linear", "center, scrolly, fillxy");
+let main = CreateLayout("linear", "center, scrolly, fillxy");
 main.setChildMargins = "null, 15px";
 ````
 
@@ -202,7 +207,7 @@ Gone make the elements hide and not visible while not taking space.
 This is an event listener method, use as
 
 ```javascript
-let loginBtn = html.Button(main, "Open Login Page");
+let loginBtn = new htmlElement(main, 'button')
 
 loginBtn.on("click", () => {
  alert('Logged In')
