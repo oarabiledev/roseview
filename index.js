@@ -1,10 +1,12 @@
 import {
     cssParser,
     createApp,
-    CreateLayout,
+    htmlLayout,
     htmlElement,
 } from "./src/roseview.core.js";
+
 import { HashRouter } from "./src/router/index.js";
+
 import {
     showIF,
     createSignal,
@@ -15,9 +17,9 @@ export {
     showIF,
     cssParser,
     createApp,
-    htmlElement,
     HashRouter,
-    CreateLayout,
+    htmlLayout,
+    htmlElement,
     createSignal,
     createReactiveSignal,
 };

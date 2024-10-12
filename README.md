@@ -1,4 +1,4 @@
-# 🔥RoseView (v0.2.1)
+# 🔥RoseView (v0.2.2)
 
 Roseview is a client side framework, designed to simplify the creation of single page applications.
 
@@ -26,14 +26,14 @@ npm run dev
 
 ### The Concept Of Layouts
 
-A layout is a special div that takes in parameters like the hash route, type of layout, alignment options.
+A layout is a special div that takes in parameters like the type of layout, alignment options.
 
 ```javascript
-import { CreateLayout } from "roseview"
-let main = CreateLayout(type, alignmentOptions);
+import { htmlLayout } from "roseview"
+let main = new htmlLayout(type, alignmentOptions);
 
 
-let main = CreateLayout("linear", "center, scrolly, fillxy");
+let main = new htmlLayout("linear", "center, scrolly, fillxy");
 
 // Always default export your main layout in that page
 ````
@@ -59,9 +59,9 @@ Alignment options available are :
 To add an html element use the `htmlElement` function, it is used like this :
 
 ```javascript
-import { CreateLayout, htmlElement } from 'roseview'
+import { htmlLayout, htmlElement } from 'roseview'
 
-let homePage = CreateLayout('linear', 'fillxy, center');
+let homePage = new htmlLayout('linear', 'fillxy, center');
 
 let btn = new htmlElement(homePage, 'button', {
   textContent: 'Hello World'})
@@ -99,9 +99,9 @@ window.app = createApp(main).use(router).mount("#app");
 In your main.js page you would have something like this :
 
 ```javascript
-import { CreateLayout, htmlElement } from "roseview";
+import { htmlLayout, htmlElement } from "roseview";
 
-let main = CreateLayout("linear", "center, scrolly, fillxy");
+let main = new htmlLayout("linear", "center, scrolly, fillxy");
 
 let btn = new htmlElement(main, 'button', { textContent: 'Go To About'})
 
@@ -182,7 +182,7 @@ btn.removeClasses = 'class1'
 There is the `setMargins / setChildMargins / setPosition` getters which allow you to change spacing without editing css directly.
 
 ```javascript
-let main = CreateLayout("linear", "center, scrolly, fillxy");
+let main = new htmlLayout("linear", "center, scrolly, fillxy");
 main.setChildMargins = "null, 15px";
 ````
 

@@ -5,27 +5,28 @@
 // MIT
 
 // @version
-// 0.2.1
-// @ts-nocheck
+// 0.2.2
 
 "use strict";
 
-/**
- * Creates a special div which has options allowing
- * you to define the position of its children.
- * @param {string} type - The type of container (e.g., 'div', 'section').
- * @param {string} options - Alignment options to define the childrens
- * alignment in the container, so as the size of the container.
- * @returns {htmlContainer} - A new htmlContainer instance.
- */
-export function CreateLayout(type, options) {
-    return new htmlContainer(type, options);
-}
+// roseview web framework for
+// declarative UI development.
+
+// @license
+// MIT
+
+// @version
+// 0.2.2
+
+"use strict";
 
 export const roseComponent = class {
     constructor() {
-        this.element;
+        /** @type {HTMLElement | null} */
+        this.element = null;
+        /** @type {Array<[string, Function]>} */
         this.eventListeners = [];
+        /** @type {Array<string>} */
         this.elementClasses = [];
     }
 
@@ -39,13 +40,13 @@ export const roseComponent = class {
      */
     css(styles) {
         const className = cssParser(styles);
-        this.element.classList.add(className);
+        this.element?.classList.add(className);
         this.elementClasses.push(className);
         return this;
     }
 
     /**
-     * For Legacy Reasons , This Is Maintained
+     * For Legacy Reasons, This Is Maintained
      * Adds CSS styles to the element using the provided styles.
      * Accepts styles as either an object or a template literal, and applies the styles by generating a class.
      * The class is added to the element's class list.
@@ -54,159 +55,155 @@ export const roseComponent = class {
      * @returns {this} - Returns the instance of the class for chaining.
      */
     style(styles) {
-        this.css(styles);
-        return this;
+        return this.css(styles);
     }
 
     /**
-     * Set the aligmnet of child elements on your control
-     * @param {string} options
+     * Set the alignment of child elements in the control.
+     * @param {string} options - Alignment options.
      */
     set alignment(options) {
-        options
-            ? optionsApi(this.element, options)
-            : console.log("Alignment Options Undefined");
+        if (options) {
+            // @ts-ignore
+            optionsApi(this.element, options);
+        } else {
+            console.log("Alignment Options Undefined");
+        }
     }
 
     /**
-     * Add multiple classes
-     * @param {string} classes
+     * Add multiple classes to the element.
+     * @param {string} classes - Space-separated class names.
      */
     set classes(classes) {
-        classes.split(" ").map((v) => {
-            this.element.classList.add(v);
+        classes.split(" ").forEach((v) => {
+            this.element?.classList.add(v);
             this.elementClasses.push(v);
         });
     }
 
     /**
-     * Remove Classes
-     * @param {string} classes
+     * Remove multiple classes from the element.
+     * @param {string} classes - Space-separated class names.
      */
     set removeClasses(classes) {
-        classes.split(" ").map((v) => {
-            this.element.classList.remove(v);
-            this.elementClasses.indexOf(v);
+        classes.split(" ").forEach((v) => {
+            this.element?.classList.remove(v);
+            const index = this.elementClasses.indexOf(v);
+            if (index > -1) {
+                this.elementClasses.splice(index, 1);
+            }
         });
     }
 
     /**
-     * Allows you to use direct DOM methods on elements,
-     * In the context provided as an object.
-     * @param {object} props
+     * Allows you to batch set element properties using direct DOM methods.
+     * @param {object} props - Properties to set on the element.
+     * @returns {this} - Returns the instance of the class for chaining.
      */
     batchProps(props) {
         Object.entries(props).forEach(([key, value]) => {
             requestAnimationFrame(() => {
-                // @ts-ignore
-                this.element[key] = value;
+                if (this.element) {
+                    // @ts-ignore
+                    this.element[key] = value;
+                }
             });
         });
         return this;
     }
 
     /**
-     * Inserts HTML content into an element by processing template literal strings.
+     * Inserts HTML content into the element by processing template literal strings.
      *
      * @param {TemplateStringsArray} strings - The array of strings in the template literal.
      * @param {...any} values - The interpolated values from the template literal.
      */
     html(strings, ...values) {
-        let htmlString = strings.reduce((result, str, i) => {
-            return result + str + (values[i] || "");
-        }, "");
-        this.element.innerHTML = htmlString;
+        const htmlString = strings.reduce(
+            (result, str, i) => result + str + (values[i] || ""),
+            ""
+        );
+        if (this.element) {
+            this.element.innerHTML = htmlString;
+        }
     }
 
     /**
-     * Add a child to that element
-     * @param {Function} child
+     * Add a child element to this element.
+     * @param {roseComponent} child - The child component to add.
+     * @returns {this} - Returns the instance of the class for chaining.
      */
     addChild(child) {
-        if (child instanceof roseComponent) {
+        if (child instanceof roseComponent && this.element) {
+            // @ts-ignore
             this.element.appendChild(child.element);
         } else {
-            console.error("Mounted Child Is Not A htmlComponent");
+            console.error("Mounted Child Is Not A roseComponent");
         }
         return this;
     }
 
     /**
-     * Remove The Child
-     * @param {object} child
+     * Remove a child element from this element.
+     * @param {roseComponent} child - The child component to remove.
+     * @returns {this} - Returns the instance of the class for chaining.
      */
     destroyChild(child) {
         if (child instanceof roseComponent) {
-            child.eventListeners.forEach((el) => {
+            child.eventListeners.forEach(([event, Fn]) => {
                 // @ts-ignore
-                let [event, Fn] = el;
-                child.element.removeEventListener(event, Fn);
+                child.element?.removeEventListener(event, Fn);
             });
-
-            child.element.remove();
+            child.element?.remove();
         } else {
-            console.error("Child Is Not A htmlComponent");
+            console.error("Child Is Not A roseComponent");
         }
         return this;
     }
 
     /**
-     * Add an event listener and handler.
-     * @param {EventListener} event
-     * @param {Function} handler
+     * Add an event listener to the element.
+     * @param {string} event - The event type.
+     * @param {Function} handler - The event handler function.
+     * @returns {this} - Returns the instance of the class for chaining.
      */
     on(event, handler) {
         // @ts-ignore
-        this.element.addEventListener(event, handler);
-        // @ts-ignore
+        this.element?.addEventListener(event, handler);
         this.eventListeners.push([event, handler]);
         return this;
     }
 
     /**
-     * Setter method to switch element visibility
-     * @param {boolean} bool
+     * Sets the visibility of the element.
+     * @param {boolean} bool - Visibility state.
      */
     set show(bool) {
-        if (bool) {
-            this.style({
-                visibility: "visible",
-            });
-        } else {
-            this.style({
-                visibility: "hidden",
-            });
-        }
+        this.style({
+            visibility: bool ? "visible" : "hidden",
+        });
     }
 
     /**
-     * Setter method, allows switching element visibility
-     * in a way that the element does not take space
-     * @param {boolean} bool
+     * Sets the display and visibility of the element.
+     * @param {boolean} bool - Visibility and space control state.
      */
     set gone(bool) {
-        if (bool) {
-            this.style({
-                display: "none !important",
-                visibility: "hidden",
-            });
-        } else {
-            this.style({
-                display: "block",
-                visibility: "visible",
-            });
-        }
+        this.style({
+            display: bool ? "none !important" : "block",
+            visibility: bool ? "hidden" : "visible",
+        });
     }
 
     /**
-     * Set The Margins Of Child Elements
-     * @param {string} params
+     * Sets the margins for all child elements.
+     * @param {string} params - Comma-separated margin values (left, top, right, bottom).
      */
     set setChildMargins(params) {
-        let [left, top, right, bottom] = params.split(",").map((val) => {
-            return val.trim();
-        });
-
+        const [left, top, right, bottom] = params
+            .split(",")
+            .map((val) => val.trim());
         this.style({
             " *": {
                 marginLeft: left,
@@ -218,14 +215,13 @@ export const roseComponent = class {
     }
 
     /**
-     * Set The Margins Of The Element
-     * @param {string} params
+     * Sets the margins for this element.
+     * @param {string} params - Comma-separated margin values (left, top, right, bottom).
      */
     set setMargins(params) {
-        let [left, top, right, bottom] = params.split(",").map((val) => {
-            return val.trim();
-        });
-
+        const [left, top, right, bottom] = params
+            .split(",")
+            .map((val) => val.trim());
         this.style({
             marginLeft: left,
             marginRight: right,
@@ -235,14 +231,13 @@ export const roseComponent = class {
     }
 
     /**
-     * Set The Pading Of The Element
-     * @param {string} params
+     * Sets the padding for this element.
+     * @param {string} params - Comma-separated padding values (left, top, right, bottom).
      */
     set setPadding(params) {
-        let [left, top, right, bottom] = params.split(",").map((val) => {
-            return val.trim();
-        });
-
+        const [left, top, right, bottom] = params
+            .split(",")
+            .map((val) => val.trim());
         this.style({
             paddingLeft: left,
             paddingRight: right,
@@ -252,15 +247,13 @@ export const roseComponent = class {
     }
 
     /**
-     * Set The Position Of The Element
-     * @param {string} params
+     * Sets the position and offset values for this element.
+     * @param {string} params - Comma-separated position values (left, top, right, bottom).
      */
-
     set setPosition(params) {
-        let [leftv, topv, rightv, bottomv] = params.split(",").map((val) => {
-            return val.trim();
-        });
-
+        const [leftv, topv, rightv, bottomv] = params
+            .split(",")
+            .map((val) => val.trim());
         this.style({
             position: "relative",
             left: leftv,
@@ -272,14 +265,16 @@ export const roseComponent = class {
 };
 
 /**
- * This class allows you to create and render html elements
- * in your layout and add properties in an object style.
- * @param {HTMLElement} parent - The parent element to attach this element to.
- * @param {string} tag - The tag name of the element to create.
- * @param {Object} props - The properties to apply to the element.
- * @returns {HTMLElement} The created HTML element with methods and properties accessible.
+ * Class representing an HTML element with additional features like properties and rendering.
+ * @extends {roseComponent}
  */
 export const htmlElement = class extends roseComponent {
+    /**
+     * Creates an instance of htmlElement.
+     * @param {HTMLElement} parent - The parent element to attach this element to.
+     * @param {string} tag - The tag name of the element to create.
+     * @param {Object} props - The properties to apply to the element.
+     */
     constructor(parent, tag, props = {}) {
         super();
 
@@ -288,11 +283,12 @@ export const htmlElement = class extends roseComponent {
 
         Object.entries(props).forEach(([key, value]) => {
             requestAnimationFrame(() => {
+                // @ts-ignore
                 this.element[key] = value;
             });
         });
 
-        if (parent) {
+        if (parent instanceof roseComponent) {
             parent.addChild(this);
         } else {
             console.error("No Parent For Component To Attach To.");
@@ -300,6 +296,8 @@ export const htmlElement = class extends roseComponent {
         }
     }
 };
+
+// More code below...
 
 let viewOptions = [
     "noscrollbar",
@@ -591,7 +589,15 @@ export const cssParser = (styles, ...values) => {
     return className;
 };
 
-const htmlContainer = class extends roseComponent {
+/**
+ * Creates a special div which has options allowing
+ * you to define the position of its children.
+ * @param {string} type - The type of container (e.g., 'div', 'section').
+ * @param {string} options - Alignment options to define the childrens
+ * alignment in the container, so as the size of the container.
+ * @returns {htmlContainer} - A new htmlContainer instance.
+ */
+export const htmlLayout = class extends roseComponent {
     constructor(type = "linear", options = "fillxy,vcenter") {
         super();
 
