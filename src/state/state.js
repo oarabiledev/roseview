@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.1.8
+// 0.2.2
 
 // state Module
 
@@ -16,6 +16,9 @@
  */
 const createSignal = function (defaultValue = null) {
     let internalValue = defaultValue;
+    /**
+     * @type Array<Function>
+     */
     let subscription = [];
 
     const notify = () => {
@@ -26,11 +29,17 @@ const createSignal = function (defaultValue = null) {
         return internalValue;
     };
 
+    /**
+     * @param {any} setterValue
+     */
     const setValue = (setterValue) => {
         internalValue = setterValue;
         notify();
     };
 
+    /**
+     * @param {Function} subscriberFunc
+     */
     const setSubscriberFunc = (subscriberFunc) => {
         if (!subscriberFunc) {
             console.error(`You have not specified a subscriber function`);
@@ -47,7 +56,16 @@ const createSignal = function (defaultValue = null) {
     return [getValue, setValue, setSubscriberFunc];
 };
 
+/**
+ * Creates a signal that takes in an object, allowing
+ * for more fine-grained reactivity
+ * @param {Object} obj
+ * @returns
+ */
 const createReactiveSignal = (obj) => {
+    /**
+     * @type Array<Function>
+     */
     let subscriptions = [];
 
     const notify = () => {
@@ -55,11 +73,24 @@ const createReactiveSignal = (obj) => {
     };
 
     const proxyHandler = {
+        /**
+         *
+         * @param {any} target
+         * @param {any} key
+         * @param {any} value
+         * @returns true
+         */
         set(target, key, value) {
             target[key] = value;
             notify();
             return true;
         },
+
+        /**
+         * @param {any} target
+         * @param {any} key
+         * @returns proxy | target with key
+         */
         get(target, key) {
             if (typeof target[key] === "object" && target[key] !== null) {
                 return new Proxy(target[key], proxyHandler);
@@ -71,6 +102,9 @@ const createReactiveSignal = (obj) => {
 
     const proxy = new Proxy(obj, proxyHandler);
 
+    /**
+     * @param {Function} callback
+     */
     const subscribe = (callback) => {
         if (typeof callback === "function") {
             subscriptions.push(callback);

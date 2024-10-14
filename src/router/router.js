@@ -6,9 +6,10 @@
 // MIT
 
 // @version
-// 0.1.7
+// 0.2.2
 
 // router Module
+// @ts-ignore
 
 /**
  * Hash Based Router, Takes In Your Routes, Provided As a Dictionary
@@ -25,7 +26,7 @@ export const HashRouter = function (hashParam) {
                 window.location.hash = `#index`;
             } else this.handleHashChange();
 
-            window.onhashchange = this.handleHashChange.bind(this);
+            window.onhashchange = this._handleHashChange.bind(this);
             return this;
         },
 
@@ -41,16 +42,15 @@ export const HashRouter = function (hashParam) {
             const container = document.querySelector("#app");
             if (container) {
                 container.innerHTML = "";
-                // @ts-ignore
+
                 if (this.currentRoute && this.currentRoute.component) {
-                    // @ts-ignore
                     container.appendChild(this.currentRoute.component.element);
                 } else console.error("No valid component found for route");
             }
             return this;
         },
 
-        handleHashChange: function () {
+        _handleHashChange: function () {
             const hash = window.location.hash.slice(1) || "/";
             // @ts-ignore
             const route = this.routes.find((r) => r.path === hash);

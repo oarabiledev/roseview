@@ -5,7 +5,7 @@
 // MIT
 
 // @version
-// 0.1.9
+// 0.2.2
 
 // page Module
 
@@ -13,7 +13,7 @@
  * Load A StyleSheet
  * @param {string} dir
  */
-const ImportStyleSheet = function (dir) {
+const loadStyleSheet = function (dir) {
     const link = document.createElement("link");
     link.href = dir;
     link.type = "text/css";
@@ -40,4 +40,4 @@ const pageTitle = function (title) {
     document.title = title;
 };
 
-export { ImportStyleSheet, pageTheme, pageTitle };
+export { loadStyleSheet, pageTheme, pageTitle };

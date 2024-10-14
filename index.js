@@ -1,3 +1,4 @@
+import { pageTheme, pageTitle, loadStyleSheet } from "./src/page/index.js";
 import {
     cssParser,
     createApp,
@@ -16,10 +17,13 @@ import {
 export {
     showIF,
     cssParser,
+    pageTheme,
+    pageTitle,
     createApp,
     HashRouter,
     htmlLayout,
     htmlElement,
     createSignal,
+    loadStyleSheet,
     createReactiveSignal,
 };

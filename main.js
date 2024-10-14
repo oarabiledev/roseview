@@ -3,7 +3,7 @@
 import { HashRouter } from "roseview";
 import { createApp } from "roseview";
 
-import homePage from "./pages/main.js";
+import homePage from "./pages/index.js";
 import aboutPage from "./pages/about.js";
 import partners from "./pages/partners.js";
 

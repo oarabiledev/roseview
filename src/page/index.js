@@ -1,3 +1,3 @@
-import { pageTitle, pageTheme, ImportStyleSheet } from "./page.js";
+import { pageTitle, pageTheme, loadStyleSheet } from "./page.js";
 
-export { pageTheme, pageTitle, ImportStyleSheet };
+export { pageTheme, pageTitle, loadStyleSheet };

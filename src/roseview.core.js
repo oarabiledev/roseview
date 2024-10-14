@@ -610,7 +610,7 @@ export const htmlLayout = class extends roseComponent {
  * This function is used to attach the main component
  * of your app, so as to mount plugins
  * @param {Function} mainComponent
- * @returns
+ * @returns app
  */
 export const createApp = function (mainComponent) {
     const app = {
