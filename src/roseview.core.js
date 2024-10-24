@@ -5,19 +5,7 @@
 // MIT
 
 // @version
-// 0.2.2
-
-"use strict";
-
-// roseview web framework for
-// declarative UI development.
-
-// @license
-// MIT
-
-// @version
-// 0.2.2
-
+// 0.2.3
 "use strict";
 
 export const roseComponent = class {
@@ -296,8 +284,6 @@ export const htmlElement = class extends roseComponent {
         }
     }
 };
-
-// More code below...
 
 let viewOptions = [
     "noscrollbar",

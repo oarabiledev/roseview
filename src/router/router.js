@@ -1,4 +1,3 @@
-// @ts-nocheck
 // roseview web framework for
 // declarative ui development.
 
@@ -9,7 +8,7 @@
 // 0.2.2
 
 // router Module
-// @ts-ignore
+// @ts-nocheck
 
 /**
  * Hash Based Router, Takes In Your Routes, Provided As a Dictionary
