@@ -1,8 +1,7 @@
-import { htmlElement, htmlLayout } from "../src/roseview.core.js";
+import { htmlElement, htmlLayout } from "../../src/roseview.core.js";
 
-import TonalButton from "../components/tonalButton.js";
-import NavigationBar from "../components/navigation.js";
-
+import TonalButton from "../../components/tonalButton.js";
+import NavigationBar from "../../components/navigation.js";
 let aboutPage = new htmlLayout("linear", "top, scrolly, fillxy");
 
 NavigationBar(aboutPage);
