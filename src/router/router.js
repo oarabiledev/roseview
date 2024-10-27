@@ -23,7 +23,7 @@ export const HashRouter = function (hashParam) {
         _init: function () {
             if (!window.location.hash) {
                 window.location.hash = `#index`;
-            } else this.handleHashChange();
+            } else this._handleHashChange();
 
             window.onhashchange = this._handleHashChange.bind(this);
             return this;

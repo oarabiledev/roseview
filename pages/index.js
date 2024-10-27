@@ -1,13 +1,7 @@
-import { htmlLayout, htmlElement } from "roseview";
+import { htmlLayout } from "roseview";
+import NavigationBar from "../components/navigation.js";
 
-let homePage = new htmlLayout("linear", "center, scrolly, fillxy");
-
-const btn = new htmlElement(homePage, "button", {
-    textContent: "Go To About",
-});
-
-btn.element.onclick = function () {
-    app.router.navigate("about");
-};
+let homePage = new htmlLayout("linear", "top, scrolly, fillxy");
+NavigationBar(homePage);
 
 export default homePage;

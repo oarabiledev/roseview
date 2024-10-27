@@ -1,4 +1,4 @@
-# 🔥RoseView (v0.2.2)
+# 🔥RoseView (v0.2.4)
 
 Roseview is a client side framework, designed to simplify the creation of single page applications.
 
