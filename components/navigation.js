@@ -1,4 +1,4 @@
-import { htmlElement } from "roseview";
+import { htmlElement } from "../src/roseview.core.js";
 
 const NavigationBar = function (parent) {
     let nav = new htmlElement(parent, "nav");

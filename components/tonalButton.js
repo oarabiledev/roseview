@@ -1,4 +1,4 @@
-import { htmlElement } from "roseview";
+import { htmlElement } from "../src/roseview.core.js";
 
 const TonalButton = function (parent, text) {
     let button = new htmlElement(parent, "button", {
